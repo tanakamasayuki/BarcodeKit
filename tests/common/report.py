@@ -125,6 +125,26 @@ def _kv(line: str) -> dict[str, str]:
     return out
 
 
+@dataclass
+class Check:
+    name: str
+    ok: bool
+    note: str = ""
+
+
+_CHECK = re.compile(r"^#CHECK name=(\S+) ok=([01])(?: note=(.*))?$")
+
+
+def parse_checks(output: str) -> dict[str, Check]:
+    """Collect the `#CHECK` assertions a sketch made about itself."""
+    checks: dict[str, Check] = {}
+    for line in output.splitlines():
+        m = _CHECK.match(line.strip())
+        if m:
+            checks[m.group(1)] = Check(m.group(1), m.group(2) == "1", (m.group(3) or "").strip())
+    return checks
+
+
 def parse(output: str) -> dict[str, Case]:
     """Parse a sketch's whole output into {case name: Case}.
 
@@ -178,6 +198,23 @@ def parse(output: str) -> dict[str, Case]:
     return cases
 
 
+def read_raw(dut, timeout: int = 60) -> str:
+    """Run a sketch to completion and return everything it printed.
+
+    Waits for the `#DONE` marker so a sketch that dies halfway is reported as
+    a failure rather than as a short run.
+    """
+    dut.expect(r"#DONE", timeout=timeout)
+    raw = dut.pexpect_proc.before
+    if isinstance(raw, bytes):
+        raw = raw.decode(errors="replace")
+    return raw + "\n#DONE"
+
+
+def read_report(dut, timeout: int = 60) -> dict[str, Case]:
+    return parse(read_raw(dut, timeout))
+
+
 def decode(img, expect_format: str | None = None):
     """Decode a rendered case with zxing-cpp and return (text, format).
 
@@ -194,6 +231,11 @@ def decode(img, expect_format: str | None = None):
         raise AssertionError(f"expected one barcode, decoded {len(results)}")
     r = results[0]
     got = str(r.format)
-    if expect_format is not None and expect_format.lower() not in got.lower():
+    if expect_format is not None and _norm(expect_format) != _norm(got):
         raise AssertionError(f"decoded as {got}, expected {expect_format}")
     return r.text, got
+
+
+def _norm(name: str) -> str:
+    """zxing-cpp spells formats "Code 128" / "EAN-13"; we spell them Code128 / EAN13."""
+    return name.replace(" ", "").replace("-", "").replace("_", "").lower()

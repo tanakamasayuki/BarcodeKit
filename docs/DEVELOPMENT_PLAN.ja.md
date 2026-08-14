@@ -4,17 +4,28 @@
 
 ## 現在地
 
-**仕様策定が完了し、実装はこれから。** ドキュメントと足場（`tools/`、CI、`tests/` の枠）ができた段階。
+**共通基盤と Code 128 が動き、テスト基盤が通っている。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
 | 要件・設計・形式仕様 | 完了（[REQUIREMENTS.ja.md](REQUIREMENTS.ja.md) / [CORE_DESIGN.ja.md](CORE_DESIGN.ja.md) / [FORMATS.ja.md](FORMATS.ja.md)） |
 | テスト計画 | 完了（[TEST_PLAN.ja.md](TEST_PLAN.ja.md)） |
 | リリース自動化 | toolkit からコピー済み |
-| `src/` の実装 | 未着手 |
-| `tests/` のケース | 枠のみ |
+| 共通基盤 `Common.h` | 完了（`Result` / `Error` / `Format` / `BitWriter` / `Symbol1D`） |
+| Code 128 | 完了。A/B/C 自動選択、コードセット指定、2パス符号化 |
+| その他の1次元形式 | 未着手 |
+| QR Code | 未着手 |
+| 描画ヘルパー | 未着手 |
+| `tests/` | `vectors` / `roundtrip` / `validation` / `buffer` が緑。`checkdigit` 以降は枠のみ |
 | `examples/` | 未着手 |
-| README（日英） | 未着手 |
+| README（日英） | 初版あり。API 確定後に見直す |
+
+検証済みの事実:
+
+- 既知ベクタ 10 件が一致（期待値は python-barcode と仕様の符号表から独立に生成）
+- 往復検証 17 件が zxing-cpp でデコードでき、形式も Code 128 と認識される
+- バッファのガードバイトが無傷。`BufferTooSmall` のときバッファを一切書き換えない
+- AVR（Uno）でビルド可能。Flash 3,116 バイト / RAM 302 バイト（符号表は PROGMEM）
 
 ## v0.1.0 のゴール
 
@@ -30,9 +41,9 @@
 
 形式を 1 つ通すたびに `vectors` と `roundtrip` のテストを足す。テストの土台を最初に作ってから形式を増やす。
 
-1. **共通基盤** — `Common.h`（`Result` / `Error` / `Format` / ビットバッファ）、`BarcodeKit.h` の枠
-2. **Code 128** — 最初の 1 形式。コードセット自動選択があるので共通基盤の設計を検証できる
-3. **テスト基盤** — `tests/` の `conftest.py`、出力プロトコルの解析、`vectors` と `roundtrip` を Code 128 で通す。ここが通れば以降は形式ごとの繰り返しになる
+1. ~~**共通基盤** — `Common.h`（`Result` / `Error` / `Format` / ビットバッファ）、`BarcodeKit.h` の枠~~ 完了
+2. ~~**Code 128** — 最初の 1 形式。コードセット自動選択があるので共通基盤の設計を検証できる~~ 完了
+3. ~~**テスト基盤** — `tests/` の `conftest.py`、出力プロトコルの解析、`vectors` と `roundtrip` を Code 128 で通す~~ 完了（`validation` / `buffer` も追加）
 4. **EAN ファミリ** — EAN-13 → EAN-8 → UPC-A → UPC-E。チェックディジットの 3 通りと `barExtends()` を確立する
 5. **Code 39 / Code 93** — narrow:wide 比の扱いを確立する
 6. **ITF / ITF-14 / Codabar** — 残りの 1次元

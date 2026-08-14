@@ -8,3 +8,5 @@ All notable changes to this project are documented here.
 - Add the documentation set under `docs/` and the format reference (`docs/FORMATS.md`).
 - Add the release automation copied from arduino-library-release-toolkit.
 - Add the CI workflow: host-only pytest plus compile-only checks for the examples.
+- Implement the common core (`Result`, `Error`, `Format`, module buffer, 1D storage) and Code 128 with automatic A/B/C code set selection. Symbol tables live in flash on AVR.
+- Add the host test suite for Code 128: known vectors, zxing-cpp round-trip, input validation and buffer guarantees.

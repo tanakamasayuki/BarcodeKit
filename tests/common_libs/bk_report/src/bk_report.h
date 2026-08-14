@@ -19,10 +19,6 @@
 
 namespace bk_report {
 
-inline const char* formatName(BarcodeKit::Format f) {
-  return BarcodeKit::formatName(f);
-}
-
 // Emit one case. `sym` is any BarcodeKit symbol object, already encoded (or
 // not, when `r` reports a failure).
 template <class Symbol>
@@ -30,7 +26,7 @@ void emit(Print& out, const char* name, const Symbol& sym, const BarcodeKit::Res
   out.print(F("#BEGIN name="));
   out.print(name);
   out.print(F(" fmt="));
-  out.print(formatName(Symbol::format()));
+  out.print(BarcodeKit::formatName(Symbol::format()));
   out.print(F(" rc="));
   out.println(static_cast<unsigned>(r.error));
 
@@ -75,6 +71,19 @@ void emit(Print& out, const char* name, const Symbol& sym, const BarcodeKit::Res
   }
 
   out.println(F("#END"));
+}
+
+// A boolean assertion the sketch itself makes, for things the host cannot
+// observe from the module pattern alone (buffer guards, object state).
+//
+//   #CHECK name=guard_after_failure ok=1 note=...
+inline void check(Print& out, const char* name, bool ok, const char* note = "") {
+  out.print(F("#CHECK name="));
+  out.print(name);
+  out.print(F(" ok="));
+  out.print(ok ? 1 : 0);
+  out.print(F(" note="));
+  out.println(note);
 }
 
 // Marks the end of a sketch's output so the test can tell "no more cases"

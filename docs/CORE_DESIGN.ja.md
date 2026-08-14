@@ -330,3 +330,38 @@ template <class Symbol> void print(Print& out, const Symbol& sym,
 | `BARCODEKIT_NO_ERROR_MESSAGES` | 未定義 | 定義すると `message()` が空文字列を返し、文字列テーブルを持たない |
 
 形式ごとの有効／無効マクロは用意しない。個別インクルードとリンカの未使用シンボル除去で足りるため。
+
+## 9. 実装上の制約
+
+実装して分かった、形式を追加するときに必ず踏む点。
+
+### 9.1 符号表は必ず flash に置く
+
+AVR では `static const` のテーブルが**そのまま RAM に載る**。Code 128 の符号表だけで 212 バイトあり、Uno の RAM 2 KB の 1 割を食う。`Common.h` の `BARCODEKIT_TABLE` / `BARCODEKIT_READ8` / `BARCODEKIT_READ16` を必ず経由すること。
+
+```cpp
+static const uint16_t kPatterns[106] BARCODEKIT_TABLE = { ... };
+uint16_t p = BARCODEKIT_READ16(&kPatterns[value]);
+```
+
+AVR 以外では素の配列アクセスに展開されるので、コストはない。確認は `arduino-cli compile -b arduino:avr:uno` の RAM 使用量を見る（テーブルが RAM に落ちていれば一目で分かる）。
+
+### 9.2 Arduino.h のマクロと衝突する名前を避ける
+
+`Arduino.h` は `bit` / `min` / `max` / `abs` / `round` / `constrain` などを**マクロ**で定義している。メンバ関数名がこれらと衝突するとホストビルドでは通ってもスケッチでは壊れる。`BitWriter::bit()` は実際にこれを踏んだので `pushBit()` にしてある。
+
+ホストの g++ だけで確認せず、必ず arduino-cli のビルドを通すこと。
+
+### 9.3 符号化は2パスにする
+
+「バッファ不足のときは書き込まない」を守るため、各形式の `encode()` は
+
+1. パス1: 幅（＝必要バイト数）を算出する
+2. バッファ長を確認する。足りなければ**何も書かずに** `BufferTooSmall`
+3. パス2: 実際に書き込む
+
+の順にする。Code 128 では符号列を生成する状態機械をテンプレートの `Emit` で受け、パス1は数えるだけ、パス2は書き込む、という形で**同じコードを2回通す**。2つの実装を持つと必ずずれるため。
+
+### 9.4 符号化の選択に唯一解はない
+
+Code 128 の `"A<TAB>B"` は SHIFT を使っても CODE A へ切り替えても同じ長さになる。**どちらも規格上正しく、デコード結果も同じ**。既知ベクタを他実装から取るときは、この手の差を「不一致」と判定しないよう出所を確認すること（`tests/vectors/data/*.json` の `source` に記録している）。

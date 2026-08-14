@@ -1,0 +1,94 @@
+{
+  "cases": [
+    {
+      "name": "c128_alnum",
+      "format": "Code128",
+      "input": "ABC-12345",
+      "codeSet": "Auto",
+      "width": 134,
+      "modules": "11010010000101000110001000101100010001000110100110111001011101111010110011100100010110001011110111011011100100101111000101100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_digits",
+      "format": "Code128",
+      "input": "1234567890",
+      "codeSet": "Auto",
+      "width": 90,
+      "modules": "110100111001011001110010001011000111000101101100001010011011110110100111100101100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_lower",
+      "format": "Code128",
+      "input": "Hello",
+      "codeSet": "Auto",
+      "width": 90,
+      "modules": "110100100001100010100010110010000110010100001100101000010001111010110010100001100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_mixed",
+      "format": "Code128",
+      "input": "A1B2C3",
+      "codeSet": "Auto",
+      "width": 101,
+      "modules": "11010010000101000110001001110011010001011000110011100101000100011011001011100100111011001100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_long_digits",
+      "format": "Code128",
+      "input": "12345678901234567890",
+      "codeSet": "Auto",
+      "width": 145,
+      "modules": "1101001110010110011100100010110001110001011011000010100110111101101011001110010001011000111000101101100001010011011110110110010100001100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_ctrl",
+      "format": "Code128",
+      "input": "A\tB",
+      "codeSet": "Auto",
+      "width": 79,
+      "modules": "1101001000010100011000111101000101000011010010001011000101100001001100011101011",
+      "source": "symbol sequence (start B, SHIFT, code A tab) rendered from the specification width table; python-barcode picks the equally long CODE A switch, both decode to the same data"
+    },
+    {
+      "name": "c128_single",
+      "format": "Code128",
+      "input": "A",
+      "codeSet": "Auto",
+      "width": 46,
+      "modules": "1101001000010100011000100010110001100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_high_ascii",
+      "format": "Code128",
+      "input": "~",
+      "codeSet": "Auto",
+      "width": 57,
+      "modules": "110100100001000101111010111101000100011110101100011101011",
+      "source": "python-barcode (cross-checked against the specification width table)"
+    },
+    {
+      "name": "c128_forced_b",
+      "format": "Code128",
+      "input": "1234",
+      "codeSet": "B",
+      "width": 79,
+      "modules": "1101001000010011100110110011100101100101110011001001110111100100101100011101011",
+      "source": "computed from the specification width table"
+    },
+    {
+      "name": "c128_forced_c",
+      "format": "Code128",
+      "input": "1234",
+      "codeSet": "C",
+      "width": 57,
+      "modules": "110100111001011001110010001011000100100111101100011101011",
+      "source": "computed from the specification width table"
+    }
+  ]
+}
