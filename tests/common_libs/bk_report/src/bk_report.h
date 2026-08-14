@@ -1,0 +1,84 @@
+// Test-only helper for the BarcodeKit host tests.
+//
+// Prints an encode result in the line-oriented report protocol defined in
+// docs/TEST_PLAN.ja.md §2, which tests/common/report.py parses:
+//
+//   #BEGIN name=code128_alnum fmt=Code128 rc=0
+//   #INFO w=90 h=1 ql=10 qr=10 qt=0 qb=0 text=ABC-12345
+//   #ROW 001101100101000110100...
+//   #EXT 000000000000000000000...
+//   #END
+//
+// This lives in tests/ on purpose: the library itself must not grow a
+// test-only API, so everything here is built from the public API only.
+
+#pragma once
+
+#include <Arduino.h>
+#include <BarcodeKit.h>
+
+namespace bk_report {
+
+inline const char* formatName(BarcodeKit::Format f) {
+  return BarcodeKit::formatName(f);
+}
+
+// Emit one case. `sym` is any BarcodeKit symbol object, already encoded (or
+// not, when `r` reports a failure).
+template <class Symbol>
+void emit(Print& out, const char* name, const Symbol& sym, const BarcodeKit::Result& r) {
+  out.print(F("#BEGIN name="));
+  out.print(name);
+  out.print(F(" fmt="));
+  out.print(formatName(Symbol::format()));
+  out.print(F(" rc="));
+  out.println(static_cast<unsigned>(r.error));
+
+  if (!r) {
+    out.print(F("#INFO err="));
+    out.print(r.message());
+    out.print(F(" pos="));
+    out.println(r.position);
+    out.println(F("#END"));
+    return;
+  }
+
+  out.print(F("#INFO w="));
+  out.print(sym.width());
+  out.print(F(" h="));
+  out.print(sym.height());
+  out.print(F(" ql="));
+  out.print(sym.quietLeft());
+  out.print(F(" qr="));
+  out.print(sym.quietRight());
+  out.print(F(" qt="));
+  out.print(sym.quietTop());
+  out.print(F(" qb="));
+  out.print(sym.quietBottom());
+  out.print(F(" text="));
+  out.println(sym.text() ? sym.text() : "");
+
+  for (uint16_t y = 0; y < sym.height(); y++) {
+    out.print(F("#ROW "));
+    for (uint16_t x = 0; x < sym.width(); x++) {
+      out.print(sym.module(x, y) ? '1' : '0');
+    }
+    out.println();
+  }
+
+  if (sym.height() == 1) {
+    out.print(F("#EXT "));
+    for (uint16_t x = 0; x < sym.width(); x++) {
+      out.print(sym.barExtends(x) ? '1' : '0');
+    }
+    out.println();
+  }
+
+  out.println(F("#END"));
+}
+
+// Marks the end of a sketch's output so the test can tell "no more cases"
+// from "the sketch died halfway".
+inline void done(Print& out) { out.println(F("#DONE")); }
+
+}  // namespace bk_report

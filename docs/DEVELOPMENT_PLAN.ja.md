@@ -1,0 +1,66 @@
+# 開発計画
+
+内部の記録。日本語のみ。現在地と残作業。
+
+## 現在地
+
+**仕様策定が完了し、実装はこれから。** ドキュメントと足場（`tools/`、CI、`tests/` の枠）ができた段階。
+
+| 領域 | 状況 |
+| --- | --- |
+| 要件・設計・形式仕様 | 完了（[REQUIREMENTS.ja.md](REQUIREMENTS.ja.md) / [CORE_DESIGN.ja.md](CORE_DESIGN.ja.md) / [FORMATS.ja.md](FORMATS.ja.md)） |
+| テスト計画 | 完了（[TEST_PLAN.ja.md](TEST_PLAN.ja.md)） |
+| リリース自動化 | toolkit からコピー済み |
+| `src/` の実装 | 未着手 |
+| `tests/` のケース | 枠のみ |
+| `examples/` | 未着手 |
+| README（日英） | 未着手 |
+
+## v0.1.0 のゴール
+
+- Code 39 / Code 93 / Code 128 / EAN-8 / EAN-13 / UPC-A / UPC-E / ITF / ITF-14 / Codabar / QR Code が生成できる
+- 動的確保ゼロ、`bufferSize()` がコンパイル時に決まる
+- `BarcodeKit.h` の外部依存がゼロ
+- `BarcodeKitDraw.h` で LovyanGFX / M5GFX / Serial へ描ける
+- Tier 1・Tier 2 のテストが CI で緑
+- M5Stack Core BASIC で全形式を実機表示し、市販のスキャナアプリで読めることを確認済み（[MANUAL_TEST.ja.md](MANUAL_TEST.ja.md)）
+- AVR（Uno）で 1次元形式がビルドできる
+
+## 実装の順序
+
+形式を 1 つ通すたびに `vectors` と `roundtrip` のテストを足す。テストの土台を最初に作ってから形式を増やす。
+
+1. **共通基盤** — `Common.h`（`Result` / `Error` / `Format` / ビットバッファ）、`BarcodeKit.h` の枠
+2. **Code 128** — 最初の 1 形式。コードセット自動選択があるので共通基盤の設計を検証できる
+3. **テスト基盤** — `tests/` の `conftest.py`、出力プロトコルの解析、`vectors` と `roundtrip` を Code 128 で通す。ここが通れば以降は形式ごとの繰り返しになる
+4. **EAN ファミリ** — EAN-13 → EAN-8 → UPC-A → UPC-E。チェックディジットの 3 通りと `barExtends()` を確立する
+5. **Code 39 / Code 93** — narrow:wide 比の扱いを確立する
+6. **ITF / ITF-14 / Codabar** — 残りの 1次元
+7. **QR Code** — nayuki 実装の移植とメモリ方式の適合
+8. **描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト
+9. **examples** — M5Unified ベース 7 本
+10. **README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる
+11. **手動確認** — 実機で全形式をスキャン確認し、結果を記録
+12. **v0.1.0 リリース**
+
+## 残っている検討事項
+
+| # | 項目 | いつ決めるか |
+| --- | --- | --- |
+| 1 | `bufferSize()` の実値（特に QR の各バージョン） | 実装時。テストで固定する |
+| 2 | Codabar の幅の算出式 | 実装時 |
+| 3 | 手動確認に使うスキャナ（アプリ名・機種）を固定するか | 初回の手動確認時に記録して決める |
+| 4 | `docs/API.ja.md` / `docs/BEGINNERS_GUIDE.ja.md` を作るか | 実装完了後。README で足りるなら作らない |
+
+## v0.2 以降の候補
+
+- Data Matrix / PDF417 / Aztec Code
+- GS1-128（FNC1）・GS1 DataMatrix・GS1 QR Code
+- Code 39 / Code 93 の Full ASCII モード
+- EAN/UPC のアドオン（EAN-2 / EAN-5）
+- QR の漢字モード
+- HRI テキスト描画ヘルパー
+- Adafruit GFX / U8g2 向けアダプタ
+- 逐次生成（バッファを持たずに列ごとに計算する API）
+- サーマルプリンタ向け出力例
+- 単一クラス + enum の実行時ディスパッチラッパ

@@ -1,0 +1,80 @@
+#######################################
+# Syntax Coloring Map For BarcodeKit
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BarcodeKit	KEYWORD1
+Code39	KEYWORD1
+Code93	KEYWORD1
+Code128	KEYWORD1
+EAN8	KEYWORD1
+EAN13	KEYWORD1
+UPCA	KEYWORD1
+UPCE	KEYWORD1
+ITF	KEYWORD1
+ITF14	KEYWORD1
+Codabar	KEYWORD1
+QRCode	KEYWORD1
+Result	KEYWORD1
+Error	KEYWORD1
+Format	KEYWORD1
+Ecc	KEYWORD1
+Mask	KEYWORD1
+CodeSet	KEYWORD1
+DrawOptions	KEYWORD1
+Layout	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+encode	KEYWORD2
+bufferSize	KEYWORD2
+width	KEYWORD2
+height	KEYWORD2
+module	KEYWORD2
+barExtends	KEYWORD2
+quietLeft	KEYWORD2
+quietRight	KEYWORD2
+quietTop	KEYWORD2
+quietBottom	KEYWORD2
+text	KEYWORD2
+isEncoded	KEYWORD2
+format	KEYWORD2
+message	KEYWORD2
+setCheckDigit	KEYWORD2
+setVerifyCheckDigit	KEYWORD2
+setUppercase	KEYWORD2
+setRatio	KEYWORD2
+setCodeSet	KEYWORD2
+setPadOdd	KEYWORD2
+setAutoStartStop	KEYWORD2
+setEcc	KEYWORD2
+setVersionRange	KEYWORD2
+setMask	KEYWORD2
+setBoostEcc	KEYWORD2
+version	KEYWORD2
+layout	KEYWORD2
+render	KEYWORD2
+draw	KEYWORD2
+drawCentered	KEYWORD2
+print	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+None	LITERAL1
+InvalidCharacter	LITERAL1
+InvalidLength	LITERAL1
+CapacityExceeded	LITERAL1
+BufferTooSmall	LITERAL1
+InvalidOption	LITERAL1
+CheckDigitMismatch	LITERAL1
+InternalError	LITERAL1
+Auto	LITERAL1
+BARCODEKIT_TEXT_MAX	LITERAL1
+BARCODEKIT_NO_ERROR_MESSAGES	LITERAL1

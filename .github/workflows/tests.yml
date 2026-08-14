@@ -1,0 +1,135 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Tier 1 / Tier 2: host-only correctness and drawing tests.
+  # See docs/TEST_PLAN.ja.md.
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install SDL2 (headless LovyanGFX backend for draw_render)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+
+      - name: Setup arduino-cli
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Initialize arduino-cli
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli core update-index
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install test dependencies
+        working-directory: tests
+        run: uv sync
+
+      - name: Run pytest
+        working-directory: tests
+        run: uv run pytest -v --html=report.html --self-contained-html
+
+      - name: Upload graphics output artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphics-output
+          path: tests/**/output/**
+          if-no-files-found: ignore
+
+      - name: Upload pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: tests/report.html
+          if-no-files-found: ignore
+
+  # Tier 3: compile-only checks for the user-facing examples.
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: esp32-m5stack-core
+            profile: m5stack_core
+            examples: all
+          - name: avr-uno
+            profile: avr_uno
+            examples: onedim
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup arduino-cli
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Initialize arduino-cli
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli core update-index
+
+      - name: Compile examples
+        run: |
+          set -e
+          for dir in examples/*/; do
+            name=$(basename "$dir")
+            if [ ! -f "$dir/sketch.yaml" ]; then continue; fi
+            if ! grep -q "^  ${{ matrix.profile }}:" "$dir/sketch.yaml"; then
+              echo "skip $name (no ${{ matrix.profile }} profile)"
+              continue
+            fi
+            echo "::group::$name"
+            arduino-cli compile --profile ${{ matrix.profile }} "$dir"
+            echo "::endgroup::"
+          done
+
+  # RP2040 / SAMD are supported but only checked on demand (docs/TEST_PLAN.ja.md §3).
+  build-optional:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [rp2040, samd]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup arduino-cli
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Initialize arduino-cli
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli core update-index
+
+      - name: Compile examples
+        run: |
+          set -e
+          for dir in examples/*/; do
+            if [ ! -f "$dir/sketch.yaml" ]; then continue; fi
+            if ! grep -q "^  ${{ matrix.profile }}:" "$dir/sketch.yaml"; then continue; fi
+            arduino-cli compile --profile ${{ matrix.profile }} "$dir"
+          done
