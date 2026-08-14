@@ -89,10 +89,13 @@ void setup() {
 #include <BarcodeKitDraw.h>
 
 BarcodeKit::DrawOptions opt;
-opt.scale     = 3;      // one module = 3px
-opt.barHeight = 60;     // 1D bar height in pixels
+opt.barHeight = 60;     // 1D bar height in pixels; leaving scale at 0 picks it for you
 
 auto l = BarcodeKit::layout(bc, 0, 0, myWidth, myHeight, opt);
+if (!l.fits) {
+  // Not even one pixel per module fits, so render() draws nothing on purpose.
+  return;
+}
 BarcodeKit::render(bc, l, opt,
   [](int16_t x, int16_t y, uint16_t w, uint16_t h, bool black) {
     myDisplay.fillRect(x, y, w, h, black ? BLACK : WHITE);
@@ -154,7 +157,14 @@ Reading or decoding barcodes, camera control, image analysis, image file generat
 
 ## Documentation
 
-See [docs/README.md](docs/README.md).
+| Document | Contents |
+| --- | --- |
+| [docs/GUIDE.md](docs/GUIDE.md) | Getting started: choosing a format, scale and quiet zone, **what to check when it will not scan** |
+| [docs/FORMATS.md](docs/FORMATS.md) | Per-format characters, lengths, check digits and buffer sizes |
+| [docs/API.md](docs/API.md) | Every public type and function |
+| [examples/README.md](examples/README.md) | The example sketches |
+
+The full index is in [docs/README.md](docs/README.md).
 
 ## License
 

@@ -8,7 +8,7 @@ Which document to read, and in what order.
 
 | Tier | Languages | Documents |
 | --- | --- | --- |
-| For users | JA + EN | [../README.md](../README.md), [../examples/README.md](../examples/README.md), [../tests/README.md](../tests/README.md) |
+| For users | JA + EN | [../README.md](../README.md), [GUIDE.md](GUIDE.md), [API.md](API.md), [../examples/README.md](../examples/README.md), [../tests/README.md](../tests/README.md) |
 | Settled specification | JA + EN | [FORMATS.md](FORMATS.md) |
 | Internal notes | Japanese only | `REQUIREMENTS.ja.md`, `CORE_DESIGN.ja.md`, `DECISIONS.ja.md`, `TEST_PLAN.ja.md`, `DEVELOPMENT_PLAN.ja.md`, `MANUAL_TEST.ja.md` |
 
@@ -17,7 +17,10 @@ Which document to read, and in what order.
 | Goal | Document |
 | --- | --- |
 | Learn what the library does and see a working sketch | [../README.md](../README.md) |
-| **Choose a format; look up characters, lengths, check digits** | **[FORMATS.md](FORMATS.md)** |
+| **Start from scratch, including how to pick a format** | **[GUIDE.md](GUIDE.md)** |
+| **Look up characters, lengths, check digits per format** | **[FORMATS.md](FORMATS.md)** |
+| **Look up a function name or argument** | **[API.md](API.md)** |
+| **Work out why a symbol will not scan** | [GUIDE.md](GUIDE.md) §6 |
 | Find a sketch for your hardware | [../examples/README.md](../examples/README.md) |
 | Run the tests | [../tests/README.md](../tests/README.md) |
 
@@ -25,7 +28,9 @@ Which document to read, and in what order.
 
 **For users**
 
-- [FORMATS.md](FORMATS.md) — Supported formats reference: accepted characters, lengths, check digit handling, widths, recommended quiet zones and required buffer sizes. The document users reach for most.
+- [GUIDE.md](GUIDE.md) — Getting started: choosing a format, buffers, scale and quiet zone, check digits, **what to check when a symbol will not scan**, and how to shrink the footprint.
+- [FORMATS.md](FORMATS.md) — Supported formats reference: accepted characters, lengths, check digit handling, widths, recommended quiet zones and required buffer sizes.
+- [API.md](API.md) — Every public type and function: the shared members, per-format settings, drawing helpers and compile-time switches.
 
 **Design (Japanese only)**
 

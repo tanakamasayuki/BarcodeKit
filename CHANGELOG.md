@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 - Add the CI workflow: host-only pytest plus compile-only checks for the examples.
 - Implement the common core (`Result`, `Error`, `Format`, module buffer, 1D storage) and Code 128 with automatic A/B/C code set selection. Symbol tables live in flash on AVR.
 - Add the host test suite: known vectors, zxing-cpp round-trip, input validation and buffer guarantees.
+- Add the user documentation: `docs/GUIDE.md` (choosing a format, scale and quiet zone, and what to check when a symbol will not scan) and `docs/API.md` (every public type and function), both in Japanese and English.
 - Add seven example sketches: five M5Unified based, two that need no graphics library and build for AVR as well.
 - Add the optional drawing helpers (`BarcodeKitDraw.h`): scale selection, centring, quiet zone, guard-bar extension and bearer bars, exposed through a graphics-library independent callback plus LovyanGFX/M5GFX and Serial (ASCII) adapters.
 - Implement QR Code by vendoring nayuki's QR-Code-generator (MIT) through `tools/vendor_qrcodegen.py`, which folds it into one header, puts its error-correction tables in flash on AVR, and disables its assertions there. Output is module-identical to an upstream build.

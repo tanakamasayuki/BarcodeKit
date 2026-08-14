@@ -8,7 +8,7 @@
 
 | 区分 | 言語 | 対象 |
 | --- | --- | --- |
-| 使う人が読むもの | 日英 | [../README.ja.md](../README.ja.md)、[../examples/README.ja.md](../examples/README.ja.md)、[../tests/README.ja.md](../tests/README.ja.md) |
+| 使う人が読むもの | 日英 | [../README.ja.md](../README.ja.md)、[GUIDE.ja.md](GUIDE.ja.md)、[API.ja.md](API.ja.md)、[../examples/README.ja.md](../examples/README.ja.md)、[../tests/README.ja.md](../tests/README.ja.md) |
 | 確定した仕様 | 日英 | [FORMATS.ja.md](FORMATS.ja.md) |
 | 内部の記録・作業メモ | 日本語のみ | [REQUIREMENTS.ja.md](REQUIREMENTS.ja.md)、[CORE_DESIGN.ja.md](CORE_DESIGN.ja.md)、[DECISIONS.ja.md](DECISIONS.ja.md)、[TEST_PLAN.ja.md](TEST_PLAN.ja.md)、[DEVELOPMENT_PLAN.ja.md](DEVELOPMENT_PLAN.ja.md)、[MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) |
 
@@ -17,7 +17,10 @@
 | やりたいこと | 読む文書 |
 | --- | --- |
 | ライブラリが何をするものか知り、動くスケッチを見る | [../README.ja.md](../README.ja.md) |
+| **はじめて使う。形式の選び方から知りたい** | **[GUIDE.ja.md](GUIDE.ja.md)** |
 | **どの形式を使うか決める。文字種・桁数・チェックディジットを引く** | **[FORMATS.ja.md](FORMATS.ja.md)** |
+| **関数名と引数を引く** | **[API.ja.md](API.ja.md)** |
+| **バーコードが読めない原因を切り分ける** | [GUIDE.ja.md](GUIDE.ja.md) §6 |
 | 自分の機器向けのスケッチを探す | [../examples/README.ja.md](../examples/README.ja.md) |
 | 現在地と残作業を知る | [DEVELOPMENT_PLAN.ja.md](DEVELOPMENT_PLAN.ja.md) |
 | なぜそう設計したのかを知る | [DECISIONS.ja.md](DECISIONS.ja.md) |
@@ -27,7 +30,9 @@
 
 **利用者向け**
 
-- [FORMATS.ja.md](FORMATS.ja.md) — 対応形式リファレンス。形式ごとの文字種・桁数・チェックディジット・幅・推奨クワイエットゾーン、必要バッファサイズ。**利用者が最も引く文書**。
+- [GUIDE.ja.md](GUIDE.ja.md) — 入門ガイド。形式の選び方、バッファ、倍率と余白、チェックディジット、**読めないときの確認手順**、メモリの削り方。
+- [FORMATS.ja.md](FORMATS.ja.md) — 対応形式リファレンス。形式ごとの文字種・桁数・チェックディジット・幅・推奨クワイエットゾーン、必要バッファサイズ。
+- [API.ja.md](API.ja.md) — 公開 API の一覧。共通メンバ、形式ごとの設定、描画ヘルパー、コンパイル時スイッチ。
 
 **設計（全体像を掴むならこの順）**
 

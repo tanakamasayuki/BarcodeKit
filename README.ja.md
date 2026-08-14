@@ -89,10 +89,13 @@ void setup() {
 #include <BarcodeKitDraw.h>
 
 BarcodeKit::DrawOptions opt;
-opt.scale     = 3;      // 1モジュール = 3px
-opt.barHeight = 60;     // 1次元のバー高さ(px)
+opt.barHeight = 60;     // 1次元のバー高さ(px)。倍率(scale)は 0 のままなら自動
 
 auto l = BarcodeKit::layout(bc, 0, 0, myWidth, myHeight, opt);
+if (!l.fits) {
+  // 倍率1でも入らない。render() は何も描かない（読めないものを描かないため）
+  return;
+}
 BarcodeKit::render(bc, l, opt,
   [](int16_t x, int16_t y, uint16_t w, uint16_t h, bool black) {
     myDisplay.fillRect(x, y, w, h, black ? BLACK : WHITE);
@@ -154,7 +157,14 @@ uint8_t buf3[BarcodeKit::QRCode::bufferSize(10)];     // バージョン10まで
 
 ## ドキュメント
 
-[docs/README.ja.md](docs/README.ja.md) に案内があります。
+| 文書 | 内容 |
+| --- | --- |
+| [docs/GUIDE.ja.md](docs/GUIDE.ja.md) | 入門ガイド。形式の選び方、倍率と余白、**読めないときの確認手順** |
+| [docs/FORMATS.ja.md](docs/FORMATS.ja.md) | 形式ごとの文字種・桁数・チェックディジット・バッファサイズ |
+| [docs/API.ja.md](docs/API.ja.md) | 公開 API の一覧 |
+| [examples/README.ja.md](examples/README.ja.md) | サンプル一覧 |
+
+全体の案内は [docs/README.ja.md](docs/README.ja.md) にあります。
 
 ## ライセンス
 
