@@ -126,6 +126,40 @@ def _kv(line: str) -> dict[str, str]:
 
 
 @dataclass
+class LayoutInfo:
+    """One `#LAYOUT` line: what the drawing helper decided and drew."""
+    name: str
+    values: dict[str, int]
+
+    def __getattr__(self, key):
+        try:
+            return self.values[key]
+        except KeyError:
+            raise AttributeError(key) from None
+
+
+_LAYOUT = re.compile(r"^#LAYOUT name=(\S+) (.*)$")
+
+
+def parse_layouts(output: str) -> dict[str, LayoutInfo]:
+    layouts: dict[str, LayoutInfo] = {}
+    for line in output.splitlines():
+        m = _LAYOUT.match(line.strip())
+        if not m:
+            continue
+        values: dict[str, int] = {}
+        for token in m.group(2).split():
+            key, _, value = token.partition("=")
+            if "x" in value and key == "area":
+                w, _, h = value.partition("x")
+                values["areaW"], values["areaH"] = int(w), int(h)
+            else:
+                values[key] = int(value)
+        layouts[m.group(1)] = LayoutInfo(m.group(1), values)
+    return layouts
+
+
+@dataclass
 class Check:
     name: str
     ok: bool

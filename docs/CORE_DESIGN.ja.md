@@ -281,6 +281,7 @@ struct Layout {
   uint16_t scale;
   uint16_t width, height;     // 余白込みの全体サイズ(px)
   bool     fits;              // 領域に収まったか
+  explicit operator bool() const;   // fits を返す
 };
 
 template <class Symbol>
@@ -288,7 +289,11 @@ Layout layout(const Symbol& sym, int16_t areaX, int16_t areaY,
               uint16_t areaW, uint16_t areaH, const DrawOptions& opt = {});
 ```
 
-**`fits == false`（倍率 1 でも入らない）なら描画側は何もしない。** 読めないバーコードを黙って描くより、描かないほうが原因に気づける。
+**`fits == false`（倍率 1 でも入らない）なら描画側は何もしない。** 読めないバーコードを黙って描くより、描かないほうが原因に気づける。倍率を明示した場合も、領域からはみ出すなら同じく描かない。
+
+自動倍率は「幅から求めた倍率を起点に、高さも収まるまで 1 ずつ下げる」方式で決める。1次元のバー高さを自動にすると倍率に依存して高さが変わるため、幅だけで決めると収まらないことがあるため。
+
+`barHeight` の既定は**シンボル幅の 15%**（下限 16px）。印刷の一般的な推奨に合わせている。
 
 ### 7.3 汎用レンダラ
 
@@ -300,9 +305,15 @@ void render(const Symbol& sym, const Layout& l,
 
 `fillRect(x, y, w, h, black)` を呼ぶだけ。ラムダでも関数ポインタでも受けられる。**連続する同色モジュールは 1 回の `fillRect` にまとめる**（呼び出し回数を減らす）。
 
+ただし1次元では、**ガードバーは他のバーより背が高いので、太さが同じでも別の矩形になる**。ランは「色が変わったとき」と「`barExtends()` が変わったとき」で切る。
+
+`fillBackground` が有効なら、最初に余白込みの全体を背景色で 1 回塗る。呼び出し回数はちょうど 1 増える。
+
 ### 7.4 LovyanGFX / M5GFX アダプタ
 
-`LovyanGFX.hpp` / `M5GFX.h` / `M5Unified.h` のいずれかが先に include されている場合だけ有効化する（`__LOVYANGFX_HPP__` 等で検出）。
+`LovyanGFX.hpp` / `M5GFX.h` / `M5Unified.h` のいずれかが先に include されている場合だけ有効化する。**検出マクロは `LOVYANGFX_HPP_` と `__M5GFX_H__`**（実際のヘッダガード名を確認して決めた）。
+
+色は RGB888 の `uint32_t` で持つ。LovyanGFX は `uint32_t` を RGB888 として解釈するため、そのまま `fillRect()` に渡せる。
 
 ```cpp
 template <class Symbol> Layout draw(LovyanGFX& gfx, const Symbol& sym,

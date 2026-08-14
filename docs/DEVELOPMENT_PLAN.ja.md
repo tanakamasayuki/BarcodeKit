@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**11 形式すべてが動いている。残るは描画ヘルパーと examples。** 残りの形式はこの繰り返しで足せる状態。
+**11 形式と描画ヘルパーが動いている。残るは examples とドキュメント、実機確認。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -17,8 +17,8 @@
 | Code 39 / Code 93 | 完了。narrow:wide 比、任意チェックディジット、大文字変換 |
 | ITF / ITF-14 / Codabar | 完了。ITF の偶数桁規則、ITF-14 のチェックディジット、Codabar の start/stop |
 | QR Code | 完了。nayuki 実装を `tools/vendor_qrcodegen.py` で移植し、BarcodeKit の API を被せた |
-| 描画ヘルパー | 未着手 |
-| `tests/` | `vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` が緑。`draw_*` は未着手 |
+| 描画ヘルパー | 完了。汎用コールバック / LovyanGFX・M5GFX / Serial(ASCII) |
+| `tests/` | 8 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `draw_layout` / `draw_render`） |
 | `examples/` | 未着手 |
 | README（日英） | 初版あり。API 確定後に見直す |
 
@@ -31,6 +31,8 @@
 - **移植した QR が上流 nayuki のビルドと全モジュール一致**（4 入力 × 4 ECC × 8 マスク = 128 ケース）
 - AVR（Uno）でビルド可能。1次元 10 形式すべてを同時に使って Flash 7,944 バイト / RAM 874 バイト。QR（バージョン 4 まで）と Code 128 で Flash 9,750 バイト / RAM 644 バイト
 - ESP32 でもビルド可能（Flash 278 KB のスケッチに収まる）
+- **描画ヘルパーを含めても AVR に収まる**（Code 128 + ASCII 出力 + コールバック描画で Flash 3,818 バイト / RAM 315 バイト）
+- **SDL2 上の LovyanGFX へ実際に描いた 14 枚の PNG が zxing-cpp でデコードできる**（全形式 + 色指定 + 座標指定 + 余白なし）
 - シンボルのオブジェクトは 64 バイト（Codabar のみ 72 バイト。`BARCODEKIT_TEXT_MAX=16` で 32 バイトまで縮む）
 
 ## v0.1.0 のゴール
@@ -54,7 +56,7 @@
 5. ~~**Code 39 / Code 93** — narrow:wide 比の扱いを確立する~~ 完了
 6. ~~**ITF / ITF-14 / Codabar** — 残りの 1次元~~ 完了
 7. ~~**QR Code** — nayuki 実装の移植とメモリ方式の適合~~ 完了
-8. **描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト
+8. ~~**描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト~~ 完了
 9. **examples** — M5Unified ベース 7 本
 10. **README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる
 11. **手動確認** — 実機で全形式をスキャン確認し、結果を記録

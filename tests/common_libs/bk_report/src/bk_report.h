@@ -16,6 +16,7 @@
 
 #include <Arduino.h>
 #include <BarcodeKit.h>
+#include <BarcodeKitDraw.h>  // layout() below reports what the drawing helper did
 
 namespace bk_report {
 
@@ -123,6 +124,66 @@ void sameSymbol(Print& out, const char* name, const char* a, const char* b) {
     ok = ok && s1.text() && s2.text() && strcmp(s1.text(), s2.text()) == 0;
   }
   check(out, name, ok, "computed == supplied check digit");
+}
+
+// Runs the drawing helper against a virtual area and reports what it did:
+// the layout, how many fillRect calls it made, and the bounding box of the
+// black ones. The bounding box is what lets the test prove the quiet zone was
+// left blank.
+//
+//   #LAYOUT name=qr_fit fits=1 scale=7 x=72 y=32 w=231 h=231 area=320x240
+//           calls=162 black=161 bx=72 by=32 bw=175 bh=175
+template <class Symbol>
+void layout(Print& out, const char* name, const Symbol& sym, uint16_t areaW, uint16_t areaH,
+            const BarcodeKit::DrawOptions& opt = BarcodeKit::DrawOptions()) {
+  const BarcodeKit::Layout l = BarcodeKit::layout(sym, 0, 0, areaW, areaH, opt);
+
+  uint16_t calls = 0, black = 0;
+  int32_t x0 = 32767, y0 = 32767, x1 = -32768, y1 = -32768;
+  BarcodeKit::render(sym, l, opt,
+                     [&](int16_t x, int16_t y, uint16_t w, uint16_t h, bool isBlack) {
+                       calls++;
+                       if (!isBlack) return;
+                       black++;
+                       if (x < x0) x0 = x;
+                       if (y < y0) y0 = y;
+                       if (x + w > x1) x1 = x + w;
+                       if (y + h > y1) y1 = y + h;
+                     });
+
+  out.print(F("#LAYOUT name="));
+  out.print(name);
+  out.print(F(" fits="));
+  out.print(l.fits ? 1 : 0);
+  out.print(F(" scale="));
+  out.print(l.scale);
+  out.print(F(" x="));
+  out.print(l.x);
+  out.print(F(" y="));
+  out.print(l.y);
+  out.print(F(" w="));
+  out.print(l.width);
+  out.print(F(" h="));
+  out.print(l.height);
+  out.print(F(" area="));
+  out.print(areaW);
+  out.print('x');
+  out.print(areaH);
+  out.print(F(" calls="));
+  out.print(calls);
+  out.print(F(" black="));
+  out.print(black);
+  if (black) {
+    out.print(F(" bx="));
+    out.print((int)x0);
+    out.print(F(" by="));
+    out.print((int)y0);
+    out.print(F(" bw="));
+    out.print((int)(x1 - x0));
+    out.print(F(" bh="));
+    out.print((int)(y1 - y0));
+  }
+  out.println();
 }
 
 // Marks the end of a sketch's output so the test can tell "no more cases"
