@@ -1,40 +1,25 @@
-# Changelog
-
-All notable changes to this project are documented here.
+# Changelog / 変更履歴
 
 ## Unreleased
-
-First release. BarcodeKit generates the logical black/white module pattern for a barcode or QR code; drawing, printing and transmitting are up to you.
-
-### Formats
-
-- **1D**: Code 39, Code 93, Code 128, EAN-8, EAN-13, UPC-A, UPC-E, ITF, ITF-14, Codabar
-- **2D**: QR Code, ported from nayuki's QR-Code-generator (MIT)
-- Check digits are computed or verified per format, and `text()` returns the final data
-- `barExtends(x)` reports the EAN/UPC guard bars that should be drawn taller
-
-### Memory
-
-- **No dynamic allocation.** You pass the buffer, and `bufferSize()` is `constexpr` so it is sized at compile time
-- A buffer that is too small is refused without being written to
-- Symbol tables live in flash on AVR. All eleven formats together fit an Uno: 7,944 bytes of flash, 874 bytes of RAM
-- `BARCODEKIT_TEXT_MAX` and `BARCODEKIT_NO_ERROR_MESSAGES` trade features for size
-
-### Drawing (optional, `BarcodeKitDraw.h`)
-
-- Picks the largest whole-number scale that fits, centres the symbol, adds the quiet zone, extends guard bars and draws ITF-14 bearer bars
-- Draws nothing when the symbol will not fit, rather than producing an unreadable one
-- A graphics-library independent callback, plus adapters for LovyanGFX / M5GFX / M5Unified and ASCII output to `Serial`
-
-### Documentation and examples
-
-- `docs/GUIDE.md` (choosing a format, scale and quiet zone, what to check when a symbol will not scan), `docs/FORMATS.md` (per-format rules) and `docs/API.md`, in Japanese and English
-- Seven example sketches: five for M5Unified, two that need no graphics library and build for AVR as well
-
-### Verification
-
-- Known-vector tests for every format, with the expected patterns generated independently of this library (python-barcode, segno, and the specification tables)
-- Round-trip tests: every symbol is rendered and read back with zxing-cpp, checking both the payload and the symbology
-- The QR port is module-identical to a build of the upstream sources across 4 inputs × 4 error correction levels × 8 masks
-- Drawing is verified by rendering through LovyanGFX on a host SDL2 build and decoding the resulting PNGs
-- Not yet covered: determinism, fuzzing and the no-allocation guarantee have no tests (`docs/TEST_PLAN.ja.md` §3), and nothing has been scanned on real hardware yet
+- (EN) First release: eleven barcode formats, generation only. Code 39, Code 93, Code 128, EAN-8, EAN-13, UPC-A, UPC-E, ITF, ITF-14, Codabar and QR Code. The library turns your data into the logical black/white module pattern and stops there — drawing, printing and transmitting are yours, which is what keeps it independent of any display, printer or graphics library.
+- (JA) 初回リリース: 11 形式に対応した生成専用ライブラリ。Code 39 / Code 93 / Code 128 / EAN-8 / EAN-13 / UPC-A / UPC-E / ITF / ITF-14 / Codabar / QR Code。入力データを論理的な白黒モジュールのパターンに変換するところまでを担当し、描画・印刷・転送は利用者に委ねる。これが表示デバイス・プリンタ・グラフィックライブラリのいずれにも依存しない理由である。
+- (EN) **No dynamic allocation anywhere.** You pass the buffer and `bufferSize()` is `constexpr`, so `uint8_t buf[BarcodeKit::EAN13::bufferSize()]` is sized at compile time and there is no out-of-memory path at run time. A buffer that is too small is refused (`BufferTooSmall`) without a single byte being written, which is possible because every encoder measures the symbol in one pass before emitting it in a second — both passes driven by the same code so they cannot disagree.
+- (JA) **動的確保を一切しない。** バッファは利用者が渡し、`bufferSize()` は `constexpr` なので `uint8_t buf[BarcodeKit::EAN13::bufferSize()]` の大きさはコンパイル時に決まり、実行時に「メモリが足りない」で失敗する経路が存在しない。バッファが足りない場合は 1 バイトも書かずに `BufferTooSmall` を返す。これは各形式の符号化を 2 パスにし（1 パス目で幅を測り、2 パス目で書き込む）、両パスを同じコードで走らせて食い違わないようにしたことで成り立っている。
+- (EN) Symbol tables live in flash on AVR. All eleven formats used at once fit an Uno — 7,944 bytes of flash and 874 bytes of RAM — and QR up to version 4 (33×33) is workable there. Plain `static const` tables would have gone to RAM instead: Code 128's table alone is 212 bytes, a tenth of an Uno's memory.
+- (JA) 符号表は AVR ではフラッシュに置く。11 形式すべてを同時に使っても Uno に収まり（フラッシュ 7,944 バイト / RAM 874 バイト）、QR もバージョン 4（33×33）までなら実用になる。素の `static const` では RAM に載ってしまう。Code 128 の表だけで 212 バイト、Uno の RAM の 1 割である。
+- (EN) The quiet zone is **not** part of the generated pattern: `width()` and `module()` describe the symbol itself, and the recommended margins come from `quietLeft()` / `quietRight()` / `quietTop()` / `quietBottom()`. Including it would have made `width()` mean different things per format — EAN-13 wants 11 modules on the left and 7 on the right — and would stop anyone sending the pattern to a printer from trimming it.
+- (JA) クワイエットゾーンは生成パターンに**含めない**。`width()` と `module()` はシンボル本体だけを表し、推奨余白は `quietLeft()` / `quietRight()` / `quietTop()` / `quietBottom()` で取得する。含めてしまうと `width()` の意味が形式ごとにぶれ（EAN-13 は左 11・右 7 モジュールと非対称）、プリンタへ送る利用者が余白を剥がせなくなる。
+- (EN) Check digits are handled per format rather than uniformly, because the formats differ: Code 93 and Code 128 always carry one and never show it in `text()`; EAN/UPC and ITF-14 compute it from a body-length input and verify a full-length one; Code 39, ITF and Codabar leave it optional and off. `barExtends(x)` reports the EAN/UPC guard bars that belong below the data bars, which is the piece every implementation has to get from somewhere.
+- (JA) チェックディジットは形式ごとに扱いを変えている。形式によって性質が違うためである。Code 93 と Code 128 は常に付き `text()` には現れない。EAN/UPC と ITF-14 は本体桁数の入力なら計算して付け、全桁の入力なら検算する。Code 39 / ITF / Codabar は任意で既定は付けない。EAN/UPC のガードバー（データバーより下へ伸ばすべき列）は `barExtends(x)` で分かる。どの実装も必ずどこかから得る必要がある情報である。
+- (EN) QR Code is nayuki's QR-Code-generator (MIT), vendored by `tools/vendor_qrcodegen.py` rather than by hand: the script folds the upstream `.c`/`.h` into one header, moves the [4][41] error-correction tables into flash for AVR and disables its assertions there. Rerunning it against a newer upstream reproduces the file, so an update is a diff review instead of a merge. The result is module-identical to a build of the upstream sources across 4 inputs × 4 error correction levels × 8 masks.
+- (JA) QR Code は nayuki の QR-Code-generator（MIT）を移植した。手作業ではなく `tools/vendor_qrcodegen.py` で機械的に変換している。上流の `.c`/`.h` を 1 枚のヘッダに畳み、`[4][41]` の誤り訂正表を AVR ではフラッシュに移し、アサーションを無効化する。上流を更新してもスクリプトを流し直せば同じ結果が再現できるので、更新作業がマージではなく差分レビューで済む。移植結果は上流をそのままビルドした出力と、4 入力 × 4 誤り訂正レベル × 8 マスクの全ケースでモジュール単位まで一致する。
+- (EN) Optional drawing helpers in `BarcodeKitDraw.h` take on the part everyone otherwise writes by hand and gets wrong: the largest whole-number scale that fits, centring, the quiet zone, the taller guard bars and ITF-14 bearer bars. **When the symbol cannot fit, nothing is drawn** — one squeezed below a pixel per module cannot be scanned, and an empty area makes that obvious where a drawn-anyway symbol hides it. The core reports rectangles to a callback and so needs no graphics library; adapters for LovyanGFX / M5GFX / M5Unified and ASCII output to `Serial` sit on top.
+- (JA) `BarcodeKitDraw.h`（任意）が、利用者が自分で書いて間違えがちな部分を引き受ける。収まる最大の整数倍率、センタリング、クワイエットゾーン、背の高いガードバー、ITF-14 のベアラバーである。**収まらない場合は何も描かない。** 1 モジュール 1 画素未満に潰れたバーコードは読めず、描いてしまうとその事実が隠れるが、何も描かれなければすぐ分かる。中核は矩形をコールバックで報告するだけなので描画ライブラリを必要とせず、その上に LovyanGFX / M5GFX / M5Unified 用と `Serial` への ASCII 出力用のアダプタを載せている。
+- (EN) Every format is checked two independent ways. Known-vector tests compare the modules against patterns generated **outside this library** (python-barcode, segno, and direct application of the specification tables), and round-trip tests render each symbol and read it back with zxing-cpp, checking the payload *and* the symbology so that decoding the right text under the wrong format still fails. Drawing is verified the same way: rendered through LovyanGFX on a host SDL2 build, the PNGs decoded.
+- (JA) 全形式を独立した 2 通りで検証している。既知ベクタテストは**このライブラリの外で**生成したパターンとモジュール列を突き合わせる（python-barcode、segno、仕様の符号表からの直接計算）。往復検証は各シンボルを描画して zxing-cpp で読み戻し、内容だけでなく認識された形式も確認する（正しい文字列が誤った形式として読まれた場合も失敗にする）。描画も同様に、ホストの SDL2 上の LovyanGFX で実際に描いた PNG をデコードして確かめている。
+- (EN) Seven example sketches, five for M5Unified and two that need no graphics library at all and build for AVR as well. `AllFormats` shows every format one screen at a time and is what the hardware scan check is done with; `SerialPrint` prints the pattern to the serial monitor when there is no display.
+- (JA) サンプルスケッチを 7 本用意した。5 本は M5Unified 用、2 本は描画ライブラリを一切必要とせず AVR でもビルドできる。`AllFormats` は全形式を 1 画面ずつ表示するもので、実機でのスキャナ確認はこれを使う。`SerialPrint` は画面がない環境でシリアルモニタにパターンを出す。
+- (EN) Documentation in Japanese and English: `docs/GUIDE.md` (which format to choose, scale and quiet zone, and a checklist for when a symbol will not scan), `docs/FORMATS.md` (characters, lengths, check digits and buffer sizes per format) and `docs/API.md`. Every number in them is checked against the implementation, and the code samples are compiled and run.
+- (JA) ドキュメントは日英で用意した。`docs/GUIDE.md`（形式の選び方、倍率と余白、読めないときの確認手順）、`docs/FORMATS.md`（形式ごとの文字種・桁数・チェックディジット・バッファサイズ）、`docs/API.md`。記載した数値はすべて実装と突き合わせて確認し、コード例は実際にコンパイル・実行して確かめている。
+- (EN) Known gaps at this point: determinism, fuzzing and the no-allocation guarantee are argued from the design and reviewed by hand but have no tests yet (`docs/TEST_PLAN.ja.md` §3); RP2040 and SAMD should work but are unverified; and nothing has been scanned on real hardware yet. Codabar's optional mod-16 check digit is the one thing no automated test can settle, because it is not part of the symbology, conventions differ between applications and no decoder validates it.
+- (JA) 現時点で埋まっていない点: 再現性・ファジング・動的確保ゼロの 3 つは設計と目視レビューで担保しているだけで、テストがまだない（`docs/TEST_PLAN.ja.md` §3）。RP2040 と SAMD は動くはずだが未検証。実機のスキャナでの確認も未実施。Codabar の任意チェックディジット（mod 16）だけは自動テストで決着できない。規格の一部ではなく運用ごとに規約が異なり、デコーダも検証しないためである。

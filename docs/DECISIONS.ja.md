@@ -90,9 +90,9 @@ Code 39 / ITF / Codabar。`setRatio(2)` で 2:1 も選べる。
 
 ### D12. リリース自動化は arduino-library-release-toolkit をコピー
 
-`tools/bump_version.py`、`tools/sync_release_assets.py`、`.github/workflows/release.yml`。
+`tools/bump_version.py` と `.github/workflows/release.yml`。
 
-**理由**: 兄弟プロジェクトと同じ運用にする。toolkit 側の更新は `sync_release_assets.py` で取り込める。
+**理由**: 兄弟プロジェクトと同じ運用にする。toolkit 側が更新されたときは、toolkit の `sync_release_assets.py` が各リポジトリへ配る（配る側のスクリプトなので、このリポジトリには置かない）。
 
 ### D13. ドキュメントは docs/ 配下にテーマ別
 
