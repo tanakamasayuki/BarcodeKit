@@ -123,7 +123,10 @@ The final data including the check digit is available from `text()`.
 
 - Numeric / alphanumeric / byte (UTF-8) modes are selected automatically.
 - **Kanji mode is not supported.** Japanese text is encoded as UTF-8 bytes, which scans correctly but is less compact than kanji mode.
-- Input that does not fit returns `CapacityExceeded`. Lower the ECC level or enlarge the buffer.
+- Input that does not fit returns `CapacityExceeded`. Lower the ECC level or raise the version ceiling (and the buffer with it).
+- **If the buffer cannot hold the version range you asked for, the ceiling drops automatically.** You only get `BufferTooSmall` when even the minimum version does not fit.
+- `encode()` also takes raw bytes. That overload always uses byte mode, so purely numeric or upper-case input gains nothing, and `text()` returns nullptr.
+- **Automatic mask selection is implementation-defined.** This library ports nayuki's penalty evaluation and may pick a different mask than another library for the same input. Both are valid and decode to the same data.
 
 ## Required buffer sizes
 
@@ -151,15 +154,20 @@ Measured 1D values (already fixed by the implementation):
 
 A symbol object itself is 64 bytes, 49 of which back `text()`. Lower `BARCODEKIT_TEXT_MAX` to shrink it (16 gives a 32-byte object).
 
-QR estimates (exact values are fixed by the implementation and locked down by tests):
+Measured QR values:
 
-| Max version | Side | Buffer |
+| Max version | Side | `bufferSize()` |
 | --- | --- | --- |
-| 10 | 57 | ~0.7 KB |
-| 20 | 97 | ~2.2 KB |
-| 40 | 177 | ~7.1 KB |
+| 2 | 25 | 160 bytes |
+| 4 | 33 | 276 bytes |
+| 6 | 41 | 424 bytes |
+| 10 | 57 | 816 bytes |
+| 20 | 97 | 2,356 bytes |
+| 40 | 177 | 7,836 bytes |
 
-On AVR (Uno, 2 KB RAM) QR tops out around version 10. Every 1D format needs only tens of bytes.
+**The QR buffer doubles as the encoder's scratch space, so it holds two symbols' worth.** The finished symbol ends up in the first half.
+
+On AVR (Uno, 2 KB RAM) **version 4 is a realistic ceiling** (`bufferSize(4)` = 276 bytes). Every 1D format needs only tens of bytes.
 
 ## Not supported
 

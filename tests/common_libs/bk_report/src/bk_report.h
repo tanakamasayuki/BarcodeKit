@@ -51,8 +51,14 @@ void emit(Print& out, const char* name, const Symbol& sym, const BarcodeKit::Res
   out.print(sym.quietTop());
   out.print(F(" qb="));
   out.print(sym.quietBottom());
-  out.print(F(" text="));
-  out.println(sym.text() ? sym.text() : "");
+  // text() is null when the data did not fit BARCODEKIT_TEXT_MAX; leaving the
+  // key out keeps that distinct from an empty string.
+  if (sym.text()) {
+    out.print(F(" text="));
+    out.println(sym.text());
+  } else {
+    out.println();
+  }
 
   for (uint16_t y = 0; y < sym.height(); y++) {
     out.print(F("#ROW "));

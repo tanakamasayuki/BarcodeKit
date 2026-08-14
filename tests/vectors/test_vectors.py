@@ -47,11 +47,16 @@ def test_vectors(dut):
             failures.append(f"{case['name']}: width {got.width}, expected {case['width']}")
         if "text" in case and got.text != case["text"]:
             failures.append(f"{case['name']}: text {got.text!r}, expected {case['text']!r}")
-        if got.rows[0] != case["modules"]:
+        if "height" in case and got.height != case["height"]:
+            failures.append(f"{case['name']}: height {got.height}, expected {case['height']}")
+        # 1D cases carry one row as a string, 2D cases a list of rows.
+        want = case["modules"] if isinstance(case["modules"], list) else [case["modules"]]
+        if got.rows != want:
             failures.append(
-                f"{case['name']}: modules differ from the expected pattern\n"
-                f"  expected ({case['source']}):\n    {case['modules']}\n"
-                f"  got:\n    {got.rows[0]}"
+                f"{case['name']}: modules differ from the expected pattern "
+                f"(expected from: {case['source']})\n"
+                f"  expected:\n    " + "\n    ".join(want) + "\n"
+                f"  got:\n    " + "\n    ".join(got.rows)
             )
 
     assert not failures, "\n".join(failures)

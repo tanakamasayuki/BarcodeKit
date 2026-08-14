@@ -41,7 +41,7 @@ class Case:
     width: int = 0
     height: int = 0
     quiet: tuple[int, int, int, int] = (0, 0, 0, 0)  # left, right, top, bottom
-    text: str = ""
+    text: str | None = None  # None when text() returned nullptr
     rows: list[str] = field(default_factory=list)
     extends: str = ""
     err: str = ""
@@ -156,13 +156,15 @@ def parse(output: str) -> dict[str, Case]:
     saw_done = False
 
     for line in output.splitlines():
-        line = line.strip()
+        # Only line endings are stripped: payloads can legitimately end with a
+        # space, and losing it would look like an encoder bug.
+        line = line.rstrip("\r\n")
         m = _BEGIN.match(line)
         if m:
             current = Case(name=m.group(1), fmt=m.group(2), rc=int(m.group(3)))
             continue
         if current is None:
-            if line == "#DONE":
+            if line.strip() == "#DONE":
                 saw_done = True
             continue
         if line.startswith("#INFO "):
@@ -176,7 +178,7 @@ def parse(output: str) -> dict[str, Case]:
                     int(kv.get("qt", 0)),
                     int(kv.get("qb", 0)),
                 )
-                current.text = kv.get("text", "")
+                current.text = kv.get("text")
             else:
                 current.err = kv.get("err", "")
                 current.position = int(kv.get("pos", NO_POSITION))
@@ -184,10 +186,10 @@ def parse(output: str) -> dict[str, Case]:
             current.rows.append(line[len("#ROW "):])
         elif line.startswith("#EXT "):
             current.extends = line[len("#EXT "):]
-        elif line == "#END":
+        elif line.strip() == "#END":
             cases[current.name] = current
             current = None
-        elif line == "#DONE":
+        elif line.strip() == "#DONE":
             saw_done = True
 
     if not saw_done:
@@ -272,6 +274,8 @@ def expected_decode(case: "Case") -> str:
     their 13-digit EAN-13 form, and reports a UPC-E symbol as the UPC-A it
     expands to.
     """
+    if case.text is None:
+        raise AssertionError("the symbol has no text() to compare a decode against")
     if case.fmt == "UPCA":
         return "0" + case.text
     if case.fmt == "UPCE":

@@ -17,7 +17,8 @@ src/
     EAN.h                   EAN8 / EAN13 / UPCA / UPCE（符号表を共有）
     ITF.h                   ITF / ITF14
     Codabar.h
-    QRCode.h                nayuki QR-Code-generator 移植
+    QRCode.h                QR Code（BarcodeKit の API）
+    qrcodegen.h             nayuki QR-Code-generator の移植（自動生成）
   BarcodeKitDraw/
     Callback.h              汎用（描画ライブラリ非依存）
     LovyanGFX.h             LovyanGFX / M5GFX / M5Unified 向け
@@ -249,7 +250,10 @@ nayuki QR-Code-generator（MIT）を移植し、`BarcodeKit::QRCode` の内部�
 - 符号化モードは数字 / 英数字 / バイト（UTF-8 をそのまま）を自動選択する。**漢字モードは非対応**。日本語は UTF-8 バイト列として符号化されるので表示自体はできる。
 - `bufferSize(maxVersion)` は作業用と結果用の 2 面を含むサイズを返す。`encode()` は 1 つのバッファを内部で 2 分割して使い、成功後は結果が先頭側に置かれる。
 - 容量超過は `CapacityExceeded`。バージョン上限がバッファ由来で下がっている場合も同じエラーになる。
-- 参考: `bufferSize(10)` ≒ 700 バイト、`bufferSize(20)` ≒ 2.2 KB、`bufferSize(40)` ≒ 7.1 KB。**実値は実装で確定し、テストで固定する。**
+- 実測: `bufferSize(4)` = 276、`bufferSize(10)` = 816、`bufferSize(20)` = 2,356、`bufferSize(40)` = 7,836 バイト。
+- **移植は `tools/vendor_qrcodegen.py` が機械的に行う。** 上流の .c/.h を 1 枚のヘッダに畳み、名前空間で包み、全関数を `inline` にし、`[4][41]` の誤り訂正表を `BARCODEKIT_TABLE`（AVR では PROGMEM）に置き、`assert` を AVR と `NDEBUG` で無効化する。手で編集しないこと。上流を更新するときはスクリプトを流し直して差分を見る。
+- 移植の正しさは「上流をそのままビルドした出力と全モジュールが一致すること」で確認した（4 入力 × 4 誤り訂正レベル × 8 マスク = 128 ケース）。
+- **マスクの自動選択は実装依存**で、segno など他実装と異なるマスクを選ぶことがある。マスクを明示すれば出力は一致する。既知ベクタはこの性質に合わせ、明示マスクのケースを segno から、自動マスクのケースを上流ビルドから採っている。
 
 ## 7. 描画ヘルパー（BarcodeKitDraw.h）
 

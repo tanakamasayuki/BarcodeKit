@@ -10,7 +10,19 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Codabar::bufferSize(32)];  // the widest of the formats used here
+static uint8_t buf[BarcodeKit::Codabar::bufferSize(32)];  // the widest 1D format used here
+static uint8_t qrBuf[BarcodeKit::QRCode::bufferSize(6)];
+
+// The QR settings vary per case, so these are spelled out rather than routed
+// through bk_report::run().
+static void qr(const char *name, const char *data, BarcodeKit::Ecc ecc,
+               BarcodeKit::Mask mask = BarcodeKit::Mask::Auto) {
+  BarcodeKit::QRCode code;
+  code.setEcc(ecc);
+  code.setMask(mask);
+  BarcodeKit::Result r = code.encode(data, qrBuf, sizeof(qrBuf));
+  bk_report::emit(Serial, name, code, r);
+}
 
 static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
 static void itfRatio2(BarcodeKit::ITF &s) { s.setRatio(2); }
@@ -81,6 +93,18 @@ void setup() {
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_symbols", "C-$:/.+D", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_ratio2", "A1234A", buf, sizeof(buf), codabarRatio2);
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_check", "A1234A", buf, sizeof(buf), codabarCheck);
+
+  qr("qr_num_m_mask2", "1234567890", BarcodeKit::Ecc::M, BarcodeKit::Mask::M2);
+  qr("qr_num_l_mask0", "1234567890", BarcodeKit::Ecc::L, BarcodeKit::Mask::M0);
+  qr("qr_alnum_q_mask4", "HELLO WORLD", BarcodeKit::Ecc::Q, BarcodeKit::Mask::M4);
+  qr("qr_alnum_m_mask1", "HELLO WORLD", BarcodeKit::Ecc::M, BarcodeKit::Mask::M1);
+  qr("qr_url_m_mask3", "https://example.com/", BarcodeKit::Ecc::M, BarcodeKit::Mask::M3);
+  qr("qr_url_l_mask7", "https://example.com/", BarcodeKit::Ecc::L, BarcodeKit::Mask::M7);
+  qr("qr_auto_url_m", "https://example.com/", BarcodeKit::Ecc::M);
+  qr("qr_auto_url_h", "https://example.com/", BarcodeKit::Ecc::H);
+  qr("qr_auto_numeric", "1234567890", BarcodeKit::Ecc::M);
+  qr("qr_auto_utf8", "\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86", BarcodeKit::Ecc::M);
+  qr("qr_auto_long", "The quick brown fox jumps over the lazy dog 0123456789", BarcodeKit::Ecc::M);
 
   bk_report::done(Serial);
 }

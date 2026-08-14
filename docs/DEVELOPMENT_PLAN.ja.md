@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**1次元 10 形式すべてが動いている。残るは QR Code と描画ヘルパー。** 残りの形式はこの繰り返しで足せる状態。
+**11 形式すべてが動いている。残るは描画ヘルパーと examples。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -16,19 +16,21 @@
 | EAN-13 / EAN-8 / UPC-A / UPC-E | 完了。チェックディジット3通り、ガードバー、UPC-E の展開規則 |
 | Code 39 / Code 93 | 完了。narrow:wide 比、任意チェックディジット、大文字変換 |
 | ITF / ITF-14 / Codabar | 完了。ITF の偶数桁規則、ITF-14 のチェックディジット、Codabar の start/stop |
-| QR Code | 未着手 |
+| QR Code | 完了。nayuki 実装を `tools/vendor_qrcodegen.py` で移植し、BarcodeKit の API を被せた |
 | 描画ヘルパー | 未着手 |
-| `tests/` | `vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` が緑。`qr` 以降は枠のみ |
+| `tests/` | `vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` が緑。`draw_*` は未着手 |
 | `examples/` | 未着手 |
 | README（日英） | 初版あり。API 確定後に見直す |
 
 検証済みの事実:
 
-- 既知ベクタ 45 件が一致（期待値は python-barcode と仕様の符号表から独立に生成。UPC-E は python-barcode に無いため L/G 表を別経路で書き下して生成）
-- 往復検証 60 件が zxing-cpp でデコードでき、形式も期待どおりに認識される
+- 既知ベクタ 56 件が一致（QR 11 件を含む）（期待値は python-barcode と仕様の符号表から独立に生成。UPC-E は python-barcode に無いため L/G 表を別経路で書き下して生成）
+- 往復検証 71 件が zxing-cpp でデコードでき、形式も期待どおりに認識される
 - チェックディジットの 3 通り（自動計算・検証・検証なし）が形式ごとに期待どおり
 - バッファのガードバイトが無傷。`BufferTooSmall` のときバッファを一切書き換えない
-- AVR（Uno）でビルド可能。**1次元 10 形式すべてを同時に使って** Flash 7,944 バイト / RAM 874 バイト（符号表は PROGMEM）
+- **移植した QR が上流 nayuki のビルドと全モジュール一致**（4 入力 × 4 ECC × 8 マスク = 128 ケース）
+- AVR（Uno）でビルド可能。1次元 10 形式すべてを同時に使って Flash 7,944 バイト / RAM 874 バイト。QR（バージョン 4 まで）と Code 128 で Flash 9,750 バイト / RAM 644 バイト
+- ESP32 でもビルド可能（Flash 278 KB のスケッチに収まる）
 - シンボルのオブジェクトは 64 バイト（Codabar のみ 72 バイト。`BARCODEKIT_TEXT_MAX=16` で 32 バイトまで縮む）
 
 ## v0.1.0 のゴール
@@ -51,7 +53,7 @@
 4. ~~**EAN ファミリ** — EAN-13 → EAN-8 → UPC-A → UPC-E。チェックディジットの 3 通りと `barExtends()` を確立する~~ 完了
 5. ~~**Code 39 / Code 93** — narrow:wide 比の扱いを確立する~~ 完了
 6. ~~**ITF / ITF-14 / Codabar** — 残りの 1次元~~ 完了
-7. **QR Code** — nayuki 実装の移植とメモリ方式の適合
+7. ~~**QR Code** — nayuki 実装の移植とメモリ方式の適合~~ 完了
 8. **描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト
 9. **examples** — M5Unified ベース 7 本
 10. **README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる
@@ -62,7 +64,7 @@
 
 | # | 項目 | いつ決めるか |
 | --- | --- | --- |
-| 1 | `bufferSize()` の実値（特に QR の各バージョン） | 実装時。テストで固定する |
+| 1 | 上流 nayuki の更新をいつ取り込むか | 必要時。`tools/vendor_qrcodegen.py` を流し直す |
 | 2 | Codabar のチェックディジット規約を実機スキャナ・相手システムで確認するか | 手動確認時。現状はデコーダで検証できない |
 | 3 | 手動確認に使うスキャナ（アプリ名・機種）を固定するか | 初回の手動確認時に記録して決める |
 | 4 | `docs/API.ja.md` / `docs/BEGINNERS_GUIDE.ja.md` を作るか | 実装完了後。README で足りるなら作らない |

@@ -29,5 +29,6 @@
 #include "BarcodeKit/EAN.h"
 #include "BarcodeKit/ITF.h"
 #include "BarcodeKit/Codabar.h"
+#include "BarcodeKit/QRCode.h"
 
 #include "barcodekit_version.h"

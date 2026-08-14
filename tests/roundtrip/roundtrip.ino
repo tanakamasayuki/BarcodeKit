@@ -6,7 +6,15 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Codabar::bufferSize(48)];  // the widest of the formats used here
+static uint8_t buf[BarcodeKit::Codabar::bufferSize(48)];  // the widest 1D format used here
+static uint8_t qrBuf[BarcodeKit::QRCode::bufferSize(6)];
+
+static void qr(const char *name, const char *data, BarcodeKit::Ecc ecc) {
+  BarcodeKit::QRCode code;
+  code.setEcc(ecc);
+  BarcodeKit::Result r = code.encode(data, qrBuf, sizeof(qrBuf));
+  bk_report::emit(Serial, name, code, r);
+}
 
 static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
 static void code39Check(BarcodeKit::Code39 &s) { s.setCheckDigit(true); }
@@ -104,6 +112,18 @@ void setup() {
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_check", "A1234A", buf, sizeof(buf), codabarCheck);
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_auto", "1234", buf, sizeof(buf), codabarAuto);
   bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_bcd", "B9876D", buf, sizeof(buf));
+
+  qr("qr_url", "https://example.com/", BarcodeKit::Ecc::M);
+  qr("qr_url_l", "https://example.com/", BarcodeKit::Ecc::L);
+  qr("qr_url_h", "https://example.com/", BarcodeKit::Ecc::H);
+  qr("qr_numeric", "1234567890", BarcodeKit::Ecc::M);
+  qr("qr_alnum", "HELLO WORLD", BarcodeKit::Ecc::M);
+  qr("qr_lower", "hello world", BarcodeKit::Ecc::M);
+  qr("qr_symbols", "$%*+-./: ", BarcodeKit::Ecc::M);
+  qr("qr_single", "A", BarcodeKit::Ecc::M);
+  qr("qr_utf8", "\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86", BarcodeKit::Ecc::M);
+  qr("qr_wifi", "WIFI:T:WPA;S:MyNetwork;P:secret123;;", BarcodeKit::Ecc::M);
+  qr("qr_max_text", "0123456789012345678901234567890123456789012345", BarcodeKit::Ecc::M);
 
   bk_report::done(Serial);
 }
