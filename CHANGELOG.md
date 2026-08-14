@@ -10,4 +10,5 @@ All notable changes to this project are documented here.
 - Add the CI workflow: host-only pytest plus compile-only checks for the examples.
 - Implement the common core (`Result`, `Error`, `Format`, module buffer, 1D storage) and Code 128 with automatic A/B/C code set selection. Symbol tables live in flash on AVR.
 - Add the host test suite: known vectors, zxing-cpp round-trip, input validation and buffer guarantees.
+- Implement Code 39 (optional mod-43 check digit, 2:1 or 3:1 wide ratio, optional upper-casing) and Code 93 (mandatory C/K check characters), sharing one character set table.
 - Implement the EAN/UPC family (EAN-13, EAN-8, UPC-A, UPC-E) with the three check digit behaviours, guard-bar reporting through `barExtends()`, and the UPC-E to UPC-A expansion rules.

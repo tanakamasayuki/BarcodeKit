@@ -70,12 +70,16 @@ The final data including the check digit is available from `text()`.
 
 ### Code 39
 
-- The `*` start/stop characters are added by the library. **Do not include them in your input.**
+- The `*` start/stop characters are added by the library. **Do not include them in your input** (doing so returns `InvalidCharacter`).
 - Lower-case input is an error. Call `setUppercase(true)` to convert automatically.
+- Adding the mod-43 check digit puts that character into `text()` too, and **scanners read it back as part of the data** (`ABC123` becomes `ABC123$`).
+- The wide:narrow ratio is `setRatio(2)` or `setRatio(3)` (default 3). Anything else returns `InvalidOption`.
 - Full ASCII mode (`+A` style shift encoding) is not supported.
 
 ### Code 93
 
+- The C and K check characters are required by the specification and always added. Nothing to configure, and they are not part of `text()` (the data is your input).
+- Lower-case input is an error. Call `setUppercase(true)` to convert automatically, as with Code 39.
 - Full ASCII mode is not supported.
 
 ### Code 128
@@ -131,6 +135,8 @@ Measured 1D values (already fixed by the implementation):
 | EAN-8 | 9 bytes |
 | UPC-E | 7 bytes |
 | Code 128 (20 input characters) | 60 bytes |
+| Code 39 (20 input characters, ratio 3) | 46 bytes |
+| Code 93 (20 input characters) | 28 bytes |
 
 A symbol object itself is 64 bytes, 49 of which back `text()`. Lower `BARCODEKIT_TEXT_MAX` to shrink it (16 gives a 32-byte object).
 

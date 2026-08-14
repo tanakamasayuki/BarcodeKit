@@ -4,7 +4,9 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Code128::bufferSize(32)];
+static uint8_t buf[BarcodeKit::Code39::bufferSize(32)];
+
+static void code39Ratio4(BarcodeKit::Code39 &s) { s.setRatio(4); }
 
 static void code128(const char *name, const char *data, size_t len,
                     BarcodeKit::CodeSet cs = BarcodeKit::CodeSet::Auto) {
@@ -55,6 +57,16 @@ void setup() {
   bk_report::run<BarcodeKit::UPCA>(Serial, "upca_long", "0360002914523", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_len7", "0425261", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_ns2", "24252614", buf, sizeof(buf));
+
+  // Code 39 / Code 93: 43 characters only, and '*' is the library's delimiter.
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_lower", "abc", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_star", "A*B", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_at", "A@B", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_empty", "", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_ratio4", "ABC", buf, sizeof(buf), code39Ratio4);
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_lower", "abc", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_star", "A*B", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_empty", "", buf, sizeof(buf));
 
   bk_report::done(Serial);
 }

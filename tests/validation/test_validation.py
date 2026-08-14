@@ -21,6 +21,15 @@ EXPECTED = {
     "upca_long": ("InvalidLength", None),
     "upce_len7": ("InvalidLength", None),
     "upce_ns2": ("InvalidCharacter", 0),
+    # Code 39 / Code 93 accept 43 characters; '*' is the library's delimiter.
+    "c39_lower": ("InvalidCharacter", 0),
+    "c39_star": ("InvalidCharacter", 1),
+    "c39_at": ("InvalidCharacter", 1),
+    "c39_empty": ("InvalidLength", None),
+    "c39_ratio4": ("InvalidOption", None),
+    "c93_lower": ("InvalidCharacter", 0),
+    "c93_star": ("InvalidCharacter", 1),
+    "c93_empty": ("InvalidLength", None),
 }
 
 

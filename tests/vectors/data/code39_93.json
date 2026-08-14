@@ -1,0 +1,94 @@
+{
+  "cases": [
+    {
+      "name": "c39_basic",
+      "format": "Code39",
+      "input": "ABC123",
+      "width": 127,
+      "modules": "1000101110111010111010100010111010111010001011101110111010001010111010001010111010111000101011101110111000101010100010111011101",
+      "text": "ABC123",
+      "source": "python-barcode"
+    },
+    {
+      "name": "c39_digits",
+      "format": "Code39",
+      "input": "1234567890",
+      "width": 191,
+      "modules": "10001011101110101110100010101110101110001010111011101110001010101010001110101110111010001110101010111000111010101010001011101110111010001011101010111000101110101010001110111010100010111011101",
+      "text": "1234567890",
+      "source": "python-barcode"
+    },
+    {
+      "name": "c39_symbols",
+      "format": "Code39",
+      "input": "A-B.C $/+%",
+      "width": 191,
+      "modules": "10001011101110101110101000101110100010101110111010111010001011101110001010111010111011101000101010001110101110101000100010001010100010001010001010001010001000101010001000100010100010111011101",
+      "text": "A-B.C $/+%",
+      "source": "python-barcode"
+    },
+    {
+      "name": "c39_single",
+      "format": "Code39",
+      "input": "A",
+      "width": 47,
+      "modules": "10001011101110101110101000101110100010111011101",
+      "text": "A",
+      "source": "python-barcode"
+    },
+    {
+      "name": "c39_check",
+      "format": "Code39",
+      "input": "ABC123",
+      "width": 143,
+      "modules": "10001011101110101110101000101110101110100010111011101110100010101110100010101110101110001010111011101110001010101000100010001010100010111011101",
+      "text": "ABC123$",
+      "source": "python-barcode"
+    },
+    {
+      "name": "c39_ratio2",
+      "format": "Code39",
+      "input": "ABC123",
+      "width": 103,
+      "modules": "1001011011010110101001011010110100101101101101001010110100101011010110010101101101100101010100101101101",
+      "text": "ABC123",
+      "source": "specification element-width table (python-barcode cannot vary the wide:narrow ratio)"
+    },
+    {
+      "name": "c93_basic",
+      "format": "Code93",
+      "input": "ABC123",
+      "width": 91,
+      "modules": "1010111101101010001101001001101000101010010001010001001010000101011011001000010101010111101",
+      "text": "ABC123",
+      "source": "specification module table and the published mod-47 C/K rules"
+    },
+    {
+      "name": "c93_digits",
+      "format": "Code93",
+      "input": "1234567890",
+      "width": 127,
+      "modules": "1010111101010010001010001001010000101001010001001001001001000101010100001000100101000010101000101001010011001101011101010111101",
+      "text": "1234567890",
+      "source": "specification module table and the published mod-47 C/K rules"
+    },
+    {
+      "name": "c93_symbols",
+      "format": "Code93",
+      "input": "A-B.C $/+%",
+      "width": 127,
+      "modules": "1010111101101010001001011101101001001110101001101000101110100101110010101011011101011101101101011101010001101010001101010111101",
+      "text": "A-B.C $/+%",
+      "source": "specification module table and the published mod-47 C/K rules"
+    },
+    {
+      "name": "c93_single",
+      "format": "Code93",
+      "input": "A",
+      "width": 46,
+      "modules": "1010111101101010001101010001100101101010111101",
+      "text": "A",
+      "source": "specification module table and the published mod-47 C/K rules"
+    }
+  ]
+}

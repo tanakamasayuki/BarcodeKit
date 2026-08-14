@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**共通基盤・Code 128・EAN/UPC ファミリが動き、テスト基盤が通っている。** 残りの形式はこの繰り返しで足せる状態。
+**7 形式（Code 39 / Code 93 / Code 128 / EAN-13 / EAN-8 / UPC-A / UPC-E）が動いている。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -14,7 +14,8 @@
 | 共通基盤 `Common.h` | 完了（`Result` / `Error` / `Format` / `BitWriter` / `Symbol1D`） |
 | Code 128 | 完了。A/B/C 自動選択、コードセット指定、2パス符号化 |
 | EAN-13 / EAN-8 / UPC-A / UPC-E | 完了。チェックディジット3通り、ガードバー、UPC-E の展開規則 |
-| Code 39 / Code 93 / ITF / ITF-14 / Codabar | 未着手 |
+| Code 39 / Code 93 | 完了。narrow:wide 比、任意チェックディジット、大文字変換 |
+| ITF / ITF-14 / Codabar | 未着手 |
 | QR Code | 未着手 |
 | 描画ヘルパー | 未着手 |
 | `tests/` | `vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` が緑。`qr` 以降は枠のみ |
@@ -23,11 +24,11 @@
 
 検証済みの事実:
 
-- 既知ベクタ 24 件が一致（期待値は python-barcode と仕様の符号表から独立に生成。UPC-E は python-barcode に無いため L/G 表を別経路で書き下して生成）
-- 往復検証 31 件が zxing-cpp でデコードでき、形式も期待どおりに認識される
+- 既知ベクタ 34 件が一致（期待値は python-barcode と仕様の符号表から独立に生成。UPC-E は python-barcode に無いため L/G 表を別経路で書き下して生成）
+- 往復検証 45 件が zxing-cpp でデコードでき、形式も期待どおりに認識される
 - チェックディジットの 3 通り（自動計算・検証・検証なし）が形式ごとに期待どおり
 - バッファのガードバイトが無傷。`BufferTooSmall` のときバッファを一切書き換えない
-- AVR（Uno）でビルド可能。5 形式を同時に使って Flash 4,794 バイト / RAM 562 バイト（符号表は PROGMEM）
+- AVR（Uno）でビルド可能。7 形式を同時に使って Flash 6,314 バイト / RAM 676 バイト（符号表は PROGMEM）
 - シンボルのオブジェクトは 64 バイト（`BARCODEKIT_TEXT_MAX=16` で 32 バイト）
 
 ## v0.1.0 のゴール
@@ -48,7 +49,7 @@
 2. ~~**Code 128** — 最初の 1 形式。コードセット自動選択があるので共通基盤の設計を検証できる~~ 完了
 3. ~~**テスト基盤** — `tests/` の `conftest.py`、出力プロトコルの解析、`vectors` と `roundtrip` を Code 128 で通す~~ 完了（`validation` / `buffer` も追加）
 4. ~~**EAN ファミリ** — EAN-13 → EAN-8 → UPC-A → UPC-E。チェックディジットの 3 通りと `barExtends()` を確立する~~ 完了
-5. **Code 39 / Code 93** — narrow:wide 比の扱いを確立する
+5. ~~**Code 39 / Code 93** — narrow:wide 比の扱いを確立する~~ 完了
 6. **ITF / ITF-14 / Codabar** — 残りの 1次元
 7. **QR Code** — nayuki 実装の移植とメモリ方式の適合
 8. **描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト

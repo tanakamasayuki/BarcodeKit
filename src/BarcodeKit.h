@@ -23,6 +23,8 @@
 
 #include "BarcodeKit/Common.h"
 
+#include "BarcodeKit/Code39.h"
+#include "BarcodeKit/Code93.h"
 #include "BarcodeKit/Code128.h"
 #include "BarcodeKit/EAN.h"
 

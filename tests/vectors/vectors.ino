@@ -12,6 +12,9 @@
 
 static uint8_t buf[BarcodeKit::Code128::bufferSize(32)];
 
+static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
+static void code39Check(BarcodeKit::Code39 &s) { s.setCheckDigit(true); }
+
 static void code128(const char *name, const char *data,
                     BarcodeKit::CodeSet cs = BarcodeKit::CodeSet::Auto) {
   BarcodeKit::Code128 bc;
@@ -33,6 +36,18 @@ void setup() {
   code128("c128_high_ascii", "~\x7F");
   code128("c128_forced_b", "1234", BarcodeKit::CodeSet::B);
   code128("c128_forced_c", "1234", BarcodeKit::CodeSet::C);
+
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_basic", "ABC123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_digits", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_symbols", "A-B.C $/+%", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_single", "A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_ratio2", "ABC123", buf, sizeof(buf), code39Ratio2);
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_check", "ABC123", buf, sizeof(buf), code39Check);
+
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_basic", "ABC123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_digits", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_symbols", "A-B.C $/+%", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_single", "A", buf, sizeof(buf));
 
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_body", "490123456789", buf, sizeof(buf));
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_zeros", "000000000000", buf, sizeof(buf));

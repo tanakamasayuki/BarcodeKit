@@ -6,7 +6,12 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Code128::bufferSize(48)];
+static uint8_t buf[BarcodeKit::Code39::bufferSize(48)];  // the widest of the formats used here
+
+static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
+static void code39Check(BarcodeKit::Code39 &s) { s.setCheckDigit(true); }
+static void code39Upper(BarcodeKit::Code39 &s) { s.setUppercase(true); }
+static void code93Upper(BarcodeKit::Code93 &s) { s.setUppercase(true); }
 
 static void code128(const char *name, const char *data,
                     BarcodeKit::CodeSet cs = BarcodeKit::CodeSet::Auto) {
@@ -36,6 +41,22 @@ void setup() {
   code128("c128_digits_in_middle", "AB1234567890CD");
   code128("c128_forced_b", "1234", BarcodeKit::CodeSet::B);
   code128("c128_forced_c", "12345678", BarcodeKit::CodeSet::C);
+
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_basic", "ABC123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_digits", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_symbols", "A-B.C $/+%", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_single", "A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_long", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_ratio2", "ABC123", buf, sizeof(buf), code39Ratio2);
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_check", "ABC123", buf, sizeof(buf), code39Check);
+  bk_report::run<BarcodeKit::Code39>(Serial, "c39_upper", "abc123", buf, sizeof(buf), code39Upper);
+
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_basic", "ABC123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_digits", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_symbols", "A-B.C $/+%", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_single", "A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_long", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_upper", "abc123", buf, sizeof(buf), code93Upper);
 
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_body", "490123456789", buf, sizeof(buf));
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_full", "4901234567894", buf, sizeof(buf));

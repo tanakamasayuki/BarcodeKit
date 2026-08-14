@@ -162,7 +162,7 @@ class BitWriter {
 // (docs/DECISIONS.ja.md D2); this only keeps the common members in one place.
 class Symbol1D {
  public:
-  Symbol1D() : buf_(nullptr), width_(0), textValid_(false) { text_[0] = '\0'; }
+  Symbol1D() : buf_(nullptr), width_(0), textLen_(0), textValid_(false) { text_[0] = '\0'; }
 
   uint16_t width() const { return width_; }
   uint16_t height() const { return 1; }
@@ -188,6 +188,7 @@ class Symbol1D {
   void clear() {
     buf_ = nullptr;
     width_ = 0;
+    textLen_ = 0;
     textValid_ = false;
     text_[0] = '\0';
   }
@@ -200,11 +201,33 @@ class Symbol1D {
     }
     memcpy(text_, s, len);
     text_[len] = '\0';
+    textLen_ = (uint8_t)len;
     textValid_ = true;
+  }
+
+  // Build text() a character at a time, so an encoder does not need a second
+  // buffer on the stack. Overflowing BARCODEKIT_TEXT_MAX makes text() return
+  // nullptr rather than truncating.
+  void beginText() {
+    textLen_ = 0;
+    textValid_ = true;
+    text_[0] = '\0';
+  }
+
+  void appendText(char c) {
+    if (!textValid_) return;
+    if (textLen_ >= BARCODEKIT_TEXT_MAX) {
+      textValid_ = false;
+      text_[0] = '\0';
+      return;
+    }
+    text_[textLen_++] = c;
+    text_[textLen_] = '\0';
   }
 
   uint8_t *buf_;
   uint16_t width_;
+  uint8_t textLen_;
   bool textValid_;
   char text_[BARCODEKIT_TEXT_MAX + 1];
 };

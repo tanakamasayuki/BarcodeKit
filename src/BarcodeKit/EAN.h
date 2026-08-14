@@ -143,10 +143,8 @@ class EANBase : public Symbol1D {
   }
 
   void storeText(const uint8_t *digits, size_t len) {
-    char tmp[16];
-    if (len >= sizeof(tmp)) return;
-    for (size_t i = 0; i < len; i++) tmp[i] = (char)('0' + digits[i]);
-    setText(tmp, len);
+    beginText();
+    for (size_t i = 0; i < len; i++) appendText((char)('0' + digits[i]));
   }
 
   bool verify_;
