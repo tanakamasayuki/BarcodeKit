@@ -1,0 +1,103 @@
+{
+  "cases": [
+    {
+      "name": "itf_4",
+      "format": "ITF",
+      "input": "1234",
+      "width": 45,
+      "modules": "101011101000101011100011101110100010100011101",
+      "text": "1234",
+      "source": "python-barcode"
+    },
+    {
+      "name": "itf_10",
+      "format": "ITF",
+      "input": "1234567890",
+      "width": 99,
+      "modules": "101011101000101011100011101110100010100011101000111000101010001010111000111010111010001110001011101",
+      "text": "1234567890",
+      "source": "python-barcode"
+    },
+    {
+      "name": "itf_ratio2",
+      "format": "ITF",
+      "input": "1234",
+      "width": 36,
+      "modules": "101011010010101100110110100101001101",
+      "text": "1234",
+      "source": "python-barcode"
+    },
+    {
+      "name": "itf_pad",
+      "format": "ITF",
+      "input": "0123",
+      "width": 45,
+      "modules": "101010001011101110100010001110001010111011101",
+      "text": "0123",
+      "source": "python-barcode (the library pads the odd input '123' with a leading zero)"
+    },
+    {
+      "name": "itf_check",
+      "format": "ITF",
+      "input": "12345",
+      "width": 63,
+      "modules": "101011101000101011100011101110100010100011101011101000100011101",
+      "text": "123457",
+      "source": "python-barcode, given the string with its check digit already appended; the check digit itself computed from the published rule"
+    },
+    {
+      "name": "itf14_body",
+      "format": "ITF14",
+      "input": "1234567890123",
+      "width": 135,
+      "modules": "101011101000101011100011101110100010100011101000111000101010001010111000111010111010001110001011101000101011100011100011101010100011101",
+      "text": "12345678901231",
+      "source": "python-barcode, given the string with its check digit already appended; the check digit itself computed from the published rule"
+    },
+    {
+      "name": "cbr_basic",
+      "format": "Codabar",
+      "input": "A12345A",
+      "width": 87,
+      "modules": "101110001000101010111000101010001011101110001010101011101000101110101000101011100010001",
+      "text": "A12345A",
+      "source": "python-barcode"
+    },
+    {
+      "name": "cbr_digits",
+      "format": "Codabar",
+      "input": "A0123456789B",
+      "width": 147,
+      "modules": "101110001000101010100011101010111000101010001011101110001010101011101000101110101000101000101011101000101110101000111010101110100010101000100010111",
+      "text": "A0123456789B",
+      "source": "python-barcode"
+    },
+    {
+      "name": "cbr_symbols",
+      "format": "Codabar",
+      "input": "C-$:/.+D",
+      "width": 107,
+      "modules": "10100010001110101000111010101110001010111010111011101110111010111011101110111010101110111011101010001110001",
+      "text": "C-$:/.+D",
+      "source": "python-barcode"
+    },
+    {
+      "name": "cbr_ratio2",
+      "format": "Codabar",
+      "input": "A1234A",
+      "width": 61,
+      "modules": "1011001001010101100101010010110110010101010110100101011001001",
+      "text": "A1234A",
+      "source": "python-barcode"
+    },
+    {
+      "name": "cbr_check",
+      "format": "Codabar",
+      "input": "A1234A",
+      "width": 87,
+      "modules": "101110001000101010111000101010001011101110001010101011101000101000101011101011100010001",
+      "text": "A12346A",
+      "source": "python-barcode, given the string with its check digit already appended; the check digit itself computed from the published rule"
+    }
+  ]
+}

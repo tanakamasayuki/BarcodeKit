@@ -97,12 +97,20 @@ The final data including the check digit is available from `text()`.
 ### ITF / ITF-14
 
 - ITF requires an even number of digits. An odd count is an error; call `setPadOdd(true)` to prepend a `0`.
+- **`setCheckDigit(true)` flips the parity of the digit count.** Adding it to four digits gives five, which is an error. Either combine it with `setPadOdd(true)` or pass an odd number of digits.
+- Up to 32 digits (`ITF::kMaxDigits`).
+- ITF-14 takes 13 or 14 digits and handles the check digit like the EAN family.
 - ITF-14 is normally printed with bearer bars, so the drawing helper adds them by default.
+- **A scanner does not validate ITF's optional check digit.** It comes back as part of the data (`12345` reads back as `123457`). Validating it is the application's job.
 
 ### Codabar
 
-- Include the start/stop characters (`A` `B` `C` `D`) in your input, e.g. `"A12345A"`.
+- Include the start/stop characters (`A` `B` `C` `D`) in your input, e.g. `"A12345A"`. A missing start or stop character returns `InvalidCharacter`.
 - Call `setAutoStartStop(true)` to have `A`/`A` added for you.
+- Call `setUppercase(true)` to accept lower-case `a`-`d` as start/stop characters.
+- `text()` and the decoded result both include the start/stop characters (`A12345A`).
+- The wide:narrow ratio is `setRatio(2)` or `setRatio(3)` (default 3).
+- **About the check digit** (`setCheckDigit(true)`): this library uses the common mod-16 convention — data characters `0-9 - $ : / . +` are 0-15, the start/stop characters `A`-`D` are 16-19, the sum covers every character including start and stop, and the result is inserted before the stop character. **Codabar check digits are not part of the symbology and different applications use different conventions.** Readers do not validate them either; the character simply comes back as data (`A1234A` reads back as `A12346A`). Confirm the convention your counterpart expects before switching this on.
 
 ### QR Code
 
@@ -137,6 +145,9 @@ Measured 1D values (already fixed by the implementation):
 | Code 128 (20 input characters) | 60 bytes |
 | Code 39 (20 input characters, ratio 3) | 46 bytes |
 | Code 93 (20 input characters) | 28 bytes |
+| ITF (20 digits, ratio 3) | 27 bytes |
+| ITF-14 | 17 bytes |
+| Codabar (20 characters, ratio 3) | 41 bytes |
 
 A symbol object itself is 64 bytes, 49 of which back `text()`. Lower `BARCODEKIT_TEXT_MAX` to shrink it (16 gives a 32-byte object).
 

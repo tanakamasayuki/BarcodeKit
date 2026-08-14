@@ -4,9 +4,10 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Code39::bufferSize(32)];
+static uint8_t buf[BarcodeKit::Codabar::bufferSize(32)];
 
 static void code39Ratio4(BarcodeKit::Code39 &s) { s.setRatio(4); }
+static void itfCheck(BarcodeKit::ITF &s) { s.setCheckDigit(true); }
 
 static void code128(const char *name, const char *data, size_t len,
                     BarcodeKit::CodeSet cs = BarcodeKit::CodeSet::Auto) {
@@ -67,6 +68,18 @@ void setup() {
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_lower", "abc", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_star", "A*B", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_empty", "", buf, sizeof(buf));
+
+  // ITF needs an even digit count; Codabar needs its start/stop characters.
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_odd", "123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_check_even", "1234", buf, sizeof(buf), itfCheck);
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_alpha", "12A4", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_empty", "", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_short", "123456789012", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_wrong_check", "12345678901239", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_no_start", "1234", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_no_stop", "A1234", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_bad_char", "AXA", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_start_only", "AA", buf, sizeof(buf));
 
   bk_report::done(Serial);
 }

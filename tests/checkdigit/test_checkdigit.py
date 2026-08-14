@@ -12,6 +12,7 @@ from common.report import mod10_check, parse, parse_checks, read_raw, upce_expan
 
 # name -> (input body, expected text)
 COMPUTED = {
+    "itf14_computed": "1234567890123",
     "ean13_computed": "490123456789",
     "ean8_computed": "1234567",
     "upca_computed": "03600029145",
@@ -22,6 +23,7 @@ VERIFIED = {
     "ean8_verified": "12345670",
     "upca_verified": "036000291452",
     "upce_verified": "04252614",
+    "itf14_verified": "12345678901231",
 }
 
 REJECTED = {
@@ -30,9 +32,10 @@ REJECTED = {
     "ean8_wrong": 7,
     "upca_wrong": 11,
     "upce_wrong": 7,
+    "itf14_wrong": 13,
 }
 
-SAME_SYMBOL = ["ean13_same", "ean8_same", "upca_same", "upce_same"]
+SAME_SYMBOL = ["ean13_same", "ean8_same", "upca_same", "upce_same", "itf14_same"]
 
 
 def test_checkdigit(dut):

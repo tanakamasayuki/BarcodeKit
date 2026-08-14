@@ -10,9 +10,14 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Code128::bufferSize(32)];
+static uint8_t buf[BarcodeKit::Codabar::bufferSize(32)];  // the widest of the formats used here
 
 static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
+static void itfRatio2(BarcodeKit::ITF &s) { s.setRatio(2); }
+static void itfPad(BarcodeKit::ITF &s) { s.setPadOdd(true); }
+static void itfCheck(BarcodeKit::ITF &s) { s.setCheckDigit(true); }
+static void codabarRatio2(BarcodeKit::Codabar &s) { s.setRatio(2); }
+static void codabarCheck(BarcodeKit::Codabar &s) { s.setCheckDigit(true); }
 static void code39Check(BarcodeKit::Code39 &s) { s.setCheckDigit(true); }
 
 static void code128(const char *name, const char *data,
@@ -63,6 +68,19 @@ void setup() {
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_3", "123453", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_4", "123454", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_9", "123459", buf, sizeof(buf));
+
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_4", "1234", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_10", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_ratio2", "1234", buf, sizeof(buf), itfRatio2);
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_pad", "123", buf, sizeof(buf), itfPad);
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_check", "12345", buf, sizeof(buf), itfCheck);
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_body", "1234567890123", buf, sizeof(buf));
+
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_basic", "A12345A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_digits", "A0123456789B", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_symbols", "C-$:/.+D", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_ratio2", "A1234A", buf, sizeof(buf), codabarRatio2);
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_check", "A1234A", buf, sizeof(buf), codabarCheck);
 
   bk_report::done(Serial);
 }

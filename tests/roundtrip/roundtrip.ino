@@ -6,12 +6,18 @@
 #include <BarcodeKit.h>
 #include <bk_report.h>
 
-static uint8_t buf[BarcodeKit::Code39::bufferSize(48)];  // the widest of the formats used here
+static uint8_t buf[BarcodeKit::Codabar::bufferSize(48)];  // the widest of the formats used here
 
 static void code39Ratio2(BarcodeKit::Code39 &s) { s.setRatio(2); }
 static void code39Check(BarcodeKit::Code39 &s) { s.setCheckDigit(true); }
 static void code39Upper(BarcodeKit::Code39 &s) { s.setUppercase(true); }
 static void code93Upper(BarcodeKit::Code93 &s) { s.setUppercase(true); }
+static void itfRatio2(BarcodeKit::ITF &s) { s.setRatio(2); }
+static void itfPad(BarcodeKit::ITF &s) { s.setPadOdd(true); }
+static void itfCheck(BarcodeKit::ITF &s) { s.setCheckDigit(true); }
+static void codabarRatio2(BarcodeKit::Codabar &s) { s.setRatio(2); }
+static void codabarCheck(BarcodeKit::Codabar &s) { s.setCheckDigit(true); }
+static void codabarAuto(BarcodeKit::Codabar &s) { s.setAutoStartStop(true); }
 
 static void code128(const char *name, const char *data,
                     BarcodeKit::CodeSet cs = BarcodeKit::CodeSet::Auto) {
@@ -80,6 +86,24 @@ void setup() {
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_4", "123454", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_9", "123459", buf, sizeof(buf));
   bk_report::run<BarcodeKit::UPCE>(Serial, "upce_full", "04252614", buf, sizeof(buf));
+
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_4", "1234", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_10", "1234567890", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_zeros", "000000", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_nines", "999999", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_ratio2", "1234", buf, sizeof(buf), itfRatio2);
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_pad", "123", buf, sizeof(buf), itfPad);
+  bk_report::run<BarcodeKit::ITF>(Serial, "itf_check", "12345", buf, sizeof(buf), itfCheck);
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_body", "1234567890123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_full", "12345678901231", buf, sizeof(buf));
+
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_basic", "A12345A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_digits", "A0123456789B", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_symbols", "C-$:/.+D", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_ratio2", "A1234A", buf, sizeof(buf), codabarRatio2);
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_check", "A1234A", buf, sizeof(buf), codabarCheck);
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_auto", "1234", buf, sizeof(buf), codabarAuto);
+  bk_report::run<BarcodeKit::Codabar>(Serial, "cbr_bcd", "B9876D", buf, sizeof(buf));
 
   bk_report::done(Serial);
 }

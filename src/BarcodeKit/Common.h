@@ -155,6 +155,27 @@ class BitWriter {
   uint16_t pos_;
 };
 
+// Mod-10 check digit, weighting the digit next to the check position by 3 and
+// alternating outwards. Shared by EAN-8, EAN-13, UPC-A, UPC-E, ITF and ITF-14.
+inline uint8_t mod10CheckDigit(const uint8_t *digits, size_t len) {
+  uint16_t sum = 0;
+  for (size_t i = 0; i < len; i++) {
+    const uint8_t weight = ((len - 1 - i) % 2 == 0) ? 3 : 1;
+    sum = (uint16_t)(sum + digits[i] * weight);
+  }
+  return (uint8_t)((10u - (sum % 10u)) % 10u);
+}
+
+// Converts a digit string to values, rejecting anything that is not 0-9.
+inline Result parseDigits(const uint8_t *data, size_t len, uint8_t *out, size_t max) {
+  if (len > max) return Result(Error::InvalidLength);
+  for (size_t i = 0; i < len; i++) {
+    if (data[i] < '0' || data[i] > '9') return Result(Error::InvalidCharacter, (uint16_t)i);
+    out[i] = (uint8_t)(data[i] - '0');
+  }
+  return Result();
+}
+
 // Storage shared by the 1D formats.
 //
 // This is a plain, non-polymorphic base: no virtual functions, no dynamic

@@ -30,6 +30,17 @@ EXPECTED = {
     "c93_lower": ("InvalidCharacter", 0),
     "c93_star": ("InvalidCharacter", 1),
     "c93_empty": ("InvalidLength", None),
+    # ITF needs an even digit count; Codabar needs its start/stop characters.
+    "itf_odd": ("InvalidLength", None),
+    "itf_check_even": ("InvalidLength", None),  # the check digit makes the count odd
+    "itf_alpha": ("InvalidCharacter", 2),
+    "itf_empty": ("InvalidLength", None),
+    "itf14_short": ("InvalidLength", None),
+    "itf14_wrong_check": ("CheckDigitMismatch", 13),
+    "cbr_no_start": ("InvalidCharacter", 0),
+    "cbr_no_stop": ("InvalidCharacter", 4),
+    "cbr_bad_char": ("InvalidCharacter", 1),
+    "cbr_start_only": ("InvalidLength", None),
 }
 
 

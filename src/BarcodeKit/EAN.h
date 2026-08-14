@@ -70,28 +70,6 @@ inline uint8_t eanL(uint8_t digit) { return BARCODEKIT_READ8(&kEanL[digit]); }
 inline uint8_t eanR(uint8_t digit) { return (uint8_t)(~eanL(digit) & 0x7Fu); }
 inline uint8_t eanG(uint8_t digit) { return eanReverse7(eanR(digit)); }
 
-// Mod-10 check digit, weighting the digit next to the check position by 3 and
-// alternating outwards. Shared by EAN-8, EAN-13, UPC-A, UPC-E and ITF-14.
-inline uint8_t eanCheckDigit(const uint8_t *digits, size_t len) {
-  uint16_t sum = 0;
-  for (size_t i = 0; i < len; i++) {
-    const uint8_t weight = ((len - 1 - i) % 2 == 0) ? 3 : 1;
-    sum = (uint16_t)(sum + digits[i] * weight);
-  }
-  return (uint8_t)((10u - (sum % 10u)) % 10u);
-}
-
-// Converts a digit string, rejecting anything that is not 0-9.
-inline Result eanParse(const char *text, size_t len, uint8_t *out, size_t max) {
-  if (len > max) return Result(Error::InvalidLength);
-  for (size_t i = 0; i < len; i++) {
-    const char c = text[i];
-    if (c < '0' || c > '9') return Result(Error::InvalidCharacter, (uint16_t)i);
-    out[i] = (uint8_t)(c - '0');
-  }
-  return Result();
-}
-
 inline void eanWriteDigits(BitWriter &w, const uint8_t *digits, size_t count,
                            uint8_t parityBits, uint8_t firstBit) {
   for (size_t i = 0; i < count; i++) {
@@ -132,10 +110,10 @@ class EANBase : public Symbol1D {
   // the length without it.
   Result applyCheckDigit(uint8_t *digits, size_t len, size_t body) {
     if (len == body) {
-      digits[body] = eanCheckDigit(digits, body);
+      digits[body] = mod10CheckDigit(digits, body);
       return Result();
     }
-    const uint8_t expected = eanCheckDigit(digits, body);
+    const uint8_t expected = mod10CheckDigit(digits, body);
     if (verify_ && digits[body] != expected) {
       return Result(Error::CheckDigitMismatch, (uint16_t)body);
     }
@@ -177,7 +155,7 @@ class EAN13 : public detail::EANBase {
     if (len != 12 && len != 13) return Result(Error::InvalidLength);
 
     uint8_t d[13];
-    Result r = detail::eanParse(reinterpret_cast<const char *>(data), len, d, 13);
+    Result r = detail::parseDigits(data, len, d, 13);
     if (!r) return r;
     r = applyCheckDigit(d, len, 12);
     if (!r) return r;
@@ -225,7 +203,7 @@ class EAN8 : public detail::EANBase {
     if (len != 7 && len != 8) return Result(Error::InvalidLength);
 
     uint8_t d[8];
-    Result r = detail::eanParse(reinterpret_cast<const char *>(data), len, d, 8);
+    Result r = detail::parseDigits(data, len, d, 8);
     if (!r) return r;
     r = applyCheckDigit(d, len, 7);
     if (!r) return r;
@@ -272,7 +250,7 @@ class UPCA : public detail::EANBase {
     if (len != 11 && len != 12) return Result(Error::InvalidLength);
 
     uint8_t d[12];
-    Result r = detail::eanParse(reinterpret_cast<const char *>(data), len, d, 12);
+    Result r = detail::parseDigits(data, len, d, 12);
     if (!r) return r;
     r = applyCheckDigit(d, len, 11);
     if (!r) return r;
@@ -318,7 +296,7 @@ class UPCE : public detail::EANBase {
     if (len != 6 && len != 8) return Result(Error::InvalidLength);
 
     uint8_t in[8];
-    Result r = detail::eanParse(reinterpret_cast<const char *>(data), len, in, 8);
+    Result r = detail::parseDigits(data, len, in, 8);
     if (!r) return r;
 
     uint8_t ns = 0;
@@ -334,7 +312,7 @@ class UPCE : public detail::EANBase {
     // The check digit is defined on the expanded UPC-A, not on the six digits.
     uint8_t upca[11];
     expand(ns, body, upca);
-    const uint8_t check = detail::eanCheckDigit(upca, 11);
+    const uint8_t check = detail::mod10CheckDigit(upca, 11);
     if (len == 8 && verify_ && in[7] != check) {
       return Result(Error::CheckDigitMismatch, 7);
     }

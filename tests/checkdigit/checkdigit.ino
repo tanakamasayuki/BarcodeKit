@@ -43,6 +43,12 @@ void setup() {
   bk_report::sameSymbol<BarcodeKit::UPCA>(Serial, "upca_same", "03600029145", "036000291452");
   bk_report::sameSymbol<BarcodeKit::UPCE>(Serial, "upce_same", "425261", "04252614");
 
+  // ITF-14 uses the same three behaviours as the EAN family.
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_computed", "1234567890123", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_verified", "12345678901231", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::ITF14>(Serial, "itf14_wrong", "12345678901239", buf, sizeof(buf));
+  bk_report::sameSymbol<BarcodeKit::ITF14>(Serial, "itf14_same", "1234567890123", "12345678901231");
+
   bk_report::done(Serial);
 }
 

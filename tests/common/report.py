@@ -300,8 +300,11 @@ def decode(img, expect_format: str | None = None):
         raise AssertionError(f"expected one barcode, decoded {len(results)}")
     r = results[0]
     got = str(r.format)
-    if expect_format is not None and _norm(expect_format) != _norm(got):
-        raise AssertionError(f"decoded as {got}, expected {expect_format}")
+    # Compare against the decoder's own name for the format we asked for:
+    # ITF-14 is not a separate symbology to a reader, it is ITF with 14 digits.
+    want = str(fmt) if fmt is not None else expect_format
+    if want is not None and _norm(want) != _norm(got):
+        raise AssertionError(f"decoded as {got}, expected {want}")
     return r.text, got
 
 
