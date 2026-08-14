@@ -45,7 +45,3 @@
 - [TEST_PLAN.ja.md](TEST_PLAN.ja.md) — テスト方針、ディレクトリ構成、スケッチと pytest の出力プロトコル、既知ベクタの出所。
 - [MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) — 実機での手動確認手順と記録。自動化しない「実際のスキャナで読めるか」を扱う。
 - [DEVELOPMENT_PLAN.ja.md](DEVELOPMENT_PLAN.ja.md) — 現在地、v0.1.0 のゴール、実装の順序、残りの検討事項。
-
-**アーカイブ**
-
-- [archive/memo.ja.md](archive/memo.ja.md) — 仕様のたたき台。ここから何をどう変えたかは [DECISIONS.ja.md](DECISIONS.ja.md) §3 にある。仕様が固まりきったら削除する。

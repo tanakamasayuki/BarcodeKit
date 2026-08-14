@@ -4,16 +4,37 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- Settle the requirements and design: memory model (caller-provided buffers), per-format classes, quiet zone kept out of the pattern, nayuki QR-Code-generator port, drawing helpers in `BarcodeKitDraw.h`. See `docs/DECISIONS.ja.md`.
-- Add the documentation set under `docs/` and the format reference (`docs/FORMATS.md`).
-- Add the release automation copied from arduino-library-release-toolkit.
-- Add the CI workflow: host-only pytest plus compile-only checks for the examples.
-- Implement the common core (`Result`, `Error`, `Format`, module buffer, 1D storage) and Code 128 with automatic A/B/C code set selection. Symbol tables live in flash on AVR.
-- Add the host test suite: known vectors, zxing-cpp round-trip, input validation and buffer guarantees.
-- Add the user documentation: `docs/GUIDE.md` (choosing a format, scale and quiet zone, and what to check when a symbol will not scan) and `docs/API.md` (every public type and function), both in Japanese and English.
-- Add seven example sketches: five M5Unified based, two that need no graphics library and build for AVR as well.
-- Add the optional drawing helpers (`BarcodeKitDraw.h`): scale selection, centring, quiet zone, guard-bar extension and bearer bars, exposed through a graphics-library independent callback plus LovyanGFX/M5GFX and Serial (ASCII) adapters.
-- Implement QR Code by vendoring nayuki's QR-Code-generator (MIT) through `tools/vendor_qrcodegen.py`, which folds it into one header, puts its error-correction tables in flash on AVR, and disables its assertions there. Output is module-identical to an upstream build.
-- Implement ITF, ITF-14 and Codabar, completing the ten 1D formats. ITF handles the even-digit rule and optional padding, ITF-14 reuses the EAN check digit behaviours, and Codabar keeps the start/stop characters as data.
-- Implement Code 39 (optional mod-43 check digit, 2:1 or 3:1 wide ratio, optional upper-casing) and Code 93 (mandatory C/K check characters), sharing one character set table.
-- Implement the EAN/UPC family (EAN-13, EAN-8, UPC-A, UPC-E) with the three check digit behaviours, guard-bar reporting through `barExtends()`, and the UPC-E to UPC-A expansion rules.
+First release. BarcodeKit generates the logical black/white module pattern for a barcode or QR code; drawing, printing and transmitting are up to you.
+
+### Formats
+
+- **1D**: Code 39, Code 93, Code 128, EAN-8, EAN-13, UPC-A, UPC-E, ITF, ITF-14, Codabar
+- **2D**: QR Code, ported from nayuki's QR-Code-generator (MIT)
+- Check digits are computed or verified per format, and `text()` returns the final data
+- `barExtends(x)` reports the EAN/UPC guard bars that should be drawn taller
+
+### Memory
+
+- **No dynamic allocation.** You pass the buffer, and `bufferSize()` is `constexpr` so it is sized at compile time
+- A buffer that is too small is refused without being written to
+- Symbol tables live in flash on AVR. All eleven formats together fit an Uno: 7,944 bytes of flash, 874 bytes of RAM
+- `BARCODEKIT_TEXT_MAX` and `BARCODEKIT_NO_ERROR_MESSAGES` trade features for size
+
+### Drawing (optional, `BarcodeKitDraw.h`)
+
+- Picks the largest whole-number scale that fits, centres the symbol, adds the quiet zone, extends guard bars and draws ITF-14 bearer bars
+- Draws nothing when the symbol will not fit, rather than producing an unreadable one
+- A graphics-library independent callback, plus adapters for LovyanGFX / M5GFX / M5Unified and ASCII output to `Serial`
+
+### Documentation and examples
+
+- `docs/GUIDE.md` (choosing a format, scale and quiet zone, what to check when a symbol will not scan), `docs/FORMATS.md` (per-format rules) and `docs/API.md`, in Japanese and English
+- Seven example sketches: five for M5Unified, two that need no graphics library and build for AVR as well
+
+### Verification
+
+- Known-vector tests for every format, with the expected patterns generated independently of this library (python-barcode, segno, and the specification tables)
+- Round-trip tests: every symbol is rendered and read back with zxing-cpp, checking both the payload and the symbology
+- The QR port is module-identical to a build of the upstream sources across 4 inputs × 4 error correction levels × 8 masks
+- Drawing is verified by rendering through LovyanGFX on a host SDL2 build and decoding the resulting PNGs
+- Not yet covered: determinism, fuzzing and the no-allocation guarantee have no tests (`docs/TEST_PLAN.ja.md` §3), and nothing has been scanned on real hardware yet

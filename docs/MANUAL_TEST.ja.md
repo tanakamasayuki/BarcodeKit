@@ -26,8 +26,10 @@
 
 ```sh
 cd examples/AllFormats
-arduino-cli compile --profile m5stack_core --upload -p /dev/ttyUSB0
+arduino-cli compile --profile m5stack_core --upload -p /dev/ttyUSB0 .
 ```
+
+ボタン A で次の形式、ボタン C で前の形式に進む。画面上部に形式名・符号化後のデータ・倍率が出るので、読めなかったときはその表示ごと記録する。
 
 ### 3.2 確認項目（形式ごと）
 
@@ -41,6 +43,8 @@ arduino-cli compile --profile m5stack_core --upload -p /dev/ttyUSB0
 | 4 | ITF-14 はベアラバー（囲み枠）がある |
 | 5 | **スキャナで読み取れる。読み取れた文字列が期待どおり** |
 | 6 | **スキャナが認識した形式が期待どおり**（EAN-13 が UPC-A と誤認されていない等） |
+
+**特に確認したいのは Codabar のチェックディジット**（`setCheckDigit(true)` を使う場合）。規格の一部ではなく運用ごとに規約が異なり、デコーダも検証しないため、**自動テストで正しさを裏付けられない唯一の箇所**になっている（[DECISIONS.ja.md](DECISIONS.ja.md) 参照）。相手システムがある場合は、その規約と一致するかをここで確かめる。
 
 ### 3.3 追加で確認すること
 

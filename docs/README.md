@@ -22,6 +22,8 @@ Which document to read, and in what order.
 | **Look up a function name or argument** | **[API.md](API.md)** |
 | **Work out why a symbol will not scan** | [GUIDE.md](GUIDE.md) §6 |
 | Find a sketch for your hardware | [../examples/README.md](../examples/README.md) |
+| See where the project stands | `DEVELOPMENT_PLAN.ja.md` (Japanese) |
+| Understand why it is designed this way | `DECISIONS.ja.md` (Japanese) |
 | Run the tests | [../tests/README.md](../tests/README.md) |
 
 ## Documents
@@ -43,7 +45,3 @@ Which document to read, and in what order.
 - `TEST_PLAN.ja.md` — Test strategy, directory layout, the sketch↔pytest output protocol, provenance of known vectors.
 - `MANUAL_TEST.ja.md` — Manual verification on real hardware: the one thing that is not automated is whether a real scanner can read the output.
 - `DEVELOPMENT_PLAN.ja.md` — Current state, v0.1.0 goals, implementation order, open questions.
-
-**Archive**
-
-- `archive/memo.ja.md` — The original requirements draft (Japanese). What changed from it is recorded in `DECISIONS.ja.md` §3.

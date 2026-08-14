@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**11 形式・描画ヘルパー・examples・ドキュメントが揃った。残るは実機確認だけ。** 残りの形式はこの繰り返しで足せる状態。
+**11 形式・描画ヘルパー・examples・ドキュメントが揃った。残るは未実装の 3 テストと実機確認。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -18,7 +18,7 @@
 | ITF / ITF-14 / Codabar | 完了。ITF の偶数桁規則、ITF-14 のチェックディジット、Codabar の start/stop |
 | QR Code | 完了。nayuki 実装を `tools/vendor_qrcodegen.py` で移植し、BarcodeKit の API を被せた |
 | 描画ヘルパー | 完了。汎用コールバック / LovyanGFX・M5GFX / Serial(ASCII) |
-| `tests/` | 8 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `draw_layout` / `draw_render`） |
+| `tests/` | 8 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `draw_layout` / `draw_render`）。`determinism` / `fuzz` / `noalloc` は**未実装** |
 | `examples/` | 完了。M5Unified 5 本 + 描画ライブラリ非依存 2 本（AVR でもビルド可） |
 | ドキュメント（日英） | 完了。README / GUIDE / FORMATS / API を実装に合わせて整備 |
 
@@ -61,8 +61,17 @@
 8. ~~**描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト~~ 完了
 9. ~~**examples** — M5Unified ベース 5 本 + 描画ライブラリ非依存 2 本~~ 完了
 10. ~~**README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる~~ 完了（[GUIDE](GUIDE.ja.md) / [API](API.ja.md) を追加。コード例は実際にコンパイル・実行して検証した）
-11. **手動確認** — 実機で全形式をスキャン確認し、結果を記録
-12. **v0.1.0 リリース**
+11. **未実装テストの追加** — `determinism` / `fuzz` / `noalloc`。[REQUIREMENTS.ja.md](REQUIREMENTS.ja.md) §8 の 3 項目を「設計で担保」から「テストで確認済み」に変えるため
+12. **手動確認** — 実機で全形式をスキャン確認し、結果を [MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) §5 に記録。**特に Codabar のチェックディジット**
+13. **v0.1.0 リリース**
+
+## リリース前の残作業
+
+| # | 項目 | 状況 |
+| --- | --- | --- |
+| A | `determinism` / `fuzz` / `noalloc` テスト | 未着手。ドキュメントでは「未実装」と明示済み |
+| B | 実機でのスキャン確認 | 未実施（実機待ち）。手順は [MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) |
+| C | RP2040 / SAMD のビルド検査 | CI にジョブはあるが、example にプロファイルが無く実質何もしていない。対応を主張するなら追加が必要 |
 
 ## 残っている検討事項
 
