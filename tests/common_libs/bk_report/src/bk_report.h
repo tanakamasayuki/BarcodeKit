@@ -86,6 +86,39 @@ inline void check(Print& out, const char* name, bool ok, const char* note = "") 
   out.println(note);
 }
 
+// Encodes `data` with `Symbol` and emits the result.
+//
+// Lives here rather than in the sketches on purpose: the Arduino preprocessor
+// inserts generated prototypes above the first function definition, which
+// lands between `template <class T>` and its function and breaks the build.
+// Keeping every template in this header keeps the .ino files plain.
+template <class Symbol>
+void run(Print& out, const char* name, const char* data, uint8_t* buf, size_t size,
+         void (*configure)(Symbol&) = nullptr) {
+  Symbol sym;
+  if (configure) configure(sym);
+  BarcodeKit::Result r = sym.encode(data, buf, size);
+  emit(out, name, sym, r);
+}
+
+// Checks that two inputs produce the identical symbol, e.g. a body and the
+// same data with its check digit already appended.
+template <class Symbol>
+void sameSymbol(Print& out, const char* name, const char* a, const char* b) {
+  uint8_t ba[24], bb[24];
+  Symbol s1, s2;
+  BarcodeKit::Result r1 = s1.encode(a, ba, sizeof(ba));
+  BarcodeKit::Result r2 = s2.encode(b, bb, sizeof(bb));
+  bool ok = (bool)r1 && (bool)r2 && s1.width() == s2.width();
+  if (ok) {
+    for (uint16_t x = 0; x < s1.width(); x++) {
+      if (s1.module(x, 0) != s2.module(x, 0)) { ok = false; break; }
+    }
+    ok = ok && s1.text() && s2.text() && strcmp(s1.text(), s2.text()) == 0;
+  }
+  check(out, name, ok, "computed == supplied check digit");
+}
+
 // Marks the end of a sketch's output so the test can tell "no more cases"
 // from "the sketch died halfway".
 inline void done(Print& out) { out.println(F("#DONE")); }

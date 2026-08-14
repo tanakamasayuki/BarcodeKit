@@ -1,8 +1,11 @@
 // Encodes a fixed set of inputs and prints them in the report protocol
 // (docs/TEST_PLAN.ja.md §2). test_vectors.py compares the module rows against
-// tests/vectors/data/*.json, and test_roundtrip.py decodes the same output.
+// tests/vectors/data/*.json.
 //
 // Keep the case names in sync with the JSON files.
+//
+// The templates live in bk_report.h: a template in a .ino gets broken by the
+// Arduino preprocessor's generated prototypes.
 
 #include <BarcodeKit.h>
 #include <bk_report.h>
@@ -30,6 +33,21 @@ void setup() {
   code128("c128_high_ascii", "~\x7F");
   code128("c128_forced_b", "1234", BarcodeKit::CodeSet::B);
   code128("c128_forced_c", "1234", BarcodeKit::CodeSet::C);
+
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_body", "490123456789", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_zeros", "000000000000", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_nines", "999999999999", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_book", "978030640615", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN8>(Serial, "ean8_body", "1234567", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN8>(Serial, "ean8_zeros", "0000000", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCA>(Serial, "upca_body", "03600029145", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCA>(Serial, "upca_zeros", "00000000000", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_0", "123450", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_1", "425261", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_2", "123452", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_3", "123453", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_4", "123454", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_tail_9", "123459", buf, sizeof(buf));
 
   bk_report::done(Serial);
 }

@@ -123,6 +123,17 @@ uint8_t buf2[BarcodeKit::Code128::bufferSize(20)];    // 入力20文字まで
 uint8_t buf3[BarcodeKit::QRCode::bufferSize(10)];     // バージョン10まで
 ```
 
+1次元の実値（実装で確定済み）:
+
+| 形式 | `bufferSize()` |
+| --- | --- |
+| EAN-13 / UPC-A | 12 バイト |
+| EAN-8 | 9 バイト |
+| UPC-E | 7 バイト |
+| Code 128（入力20文字） | 60 バイト |
+
+シンボルのオブジェクト自体は 64 バイト（うち 49 バイトが `text()` 用）。`BARCODEKIT_TEXT_MAX` を小さくすると減らせる（16 にすると 32 バイト）。
+
 QR の目安（実値は実装で確定する）:
 
 | 最大バージョン | 一辺 | バッファ |

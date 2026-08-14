@@ -123,6 +123,17 @@ uint8_t buf2[BarcodeKit::Code128::bufferSize(20)];    // up to 20 input characte
 uint8_t buf3[BarcodeKit::QRCode::bufferSize(10)];     // up to version 10
 ```
 
+Measured 1D values (already fixed by the implementation):
+
+| Format | `bufferSize()` |
+| --- | --- |
+| EAN-13 / UPC-A | 12 bytes |
+| EAN-8 | 9 bytes |
+| UPC-E | 7 bytes |
+| Code 128 (20 input characters) | 60 bytes |
+
+A symbol object itself is 64 bytes, 49 of which back `text()`. Lower `BARCODEKIT_TEXT_MAX` to shrink it (16 gives a 32-byte object).
+
 QR estimates (exact values are fixed by the implementation and locked down by tests):
 
 | Max version | Side | Buffer |

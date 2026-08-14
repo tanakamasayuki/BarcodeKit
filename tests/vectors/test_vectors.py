@@ -45,6 +45,8 @@ def test_vectors(dut):
             failures.append(f"{case['name']}: format {got.fmt}, expected {case['format']}")
         if got.width != case["width"]:
             failures.append(f"{case['name']}: width {got.width}, expected {case['width']}")
+        if "text" in case and got.text != case["text"]:
+            failures.append(f"{case['name']}: text {got.text!r}, expected {case['text']!r}")
         if got.rows[0] != case["modules"]:
             failures.append(
                 f"{case['name']}: modules differ from the expected pattern\n"

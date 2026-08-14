@@ -8,7 +8,7 @@ right text under the wrong symbology still means we generated the wrong thing.
 
 from pathlib import Path
 
-from common.report import decode, read_report
+from common.report import decode, expected_decode, read_report
 
 OUTPUT = Path(__file__).parent / "output"
 
@@ -30,11 +30,12 @@ def test_roundtrip(dut):
             img.save(OUTPUT / f"{name}.png")
             failures.append(f"{name}: {e} (saved output/{name}.png)")
             continue
-        if text != case.text:
+        want = expected_decode(case)
+        if text != want:
             OUTPUT.mkdir(exist_ok=True)
             img.save(OUTPUT / f"{name}.png")
             failures.append(
-                f"{name}: decoded {text!r} as {fmt}, expected {case.text!r} "
+                f"{name}: decoded {text!r} as {fmt}, expected {want!r} "
                 f"(saved output/{name}.png)"
             )
 

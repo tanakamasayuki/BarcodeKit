@@ -215,16 +215,85 @@ def read_report(dut, timeout: int = 60) -> dict[str, Case]:
     return parse(read_raw(dut, timeout))
 
 
+def _zxing_format(name: str):
+    import zxingcpp
+
+    return {
+        "Code39": zxingcpp.BarcodeFormat.Code39,
+        "Code93": zxingcpp.BarcodeFormat.Code93,
+        "Code128": zxingcpp.BarcodeFormat.Code128,
+        "EAN8": zxingcpp.BarcodeFormat.EAN8,
+        "EAN13": zxingcpp.BarcodeFormat.EAN13,
+        "UPCA": zxingcpp.BarcodeFormat.UPCA,
+        "UPCE": zxingcpp.BarcodeFormat.UPCE,
+        "ITF": zxingcpp.BarcodeFormat.ITF,
+        "ITF14": zxingcpp.BarcodeFormat.ITF,
+        "Codabar": zxingcpp.BarcodeFormat.Codabar,
+        "QRCode": zxingcpp.BarcodeFormat.QRCode,
+    }.get(name)
+
+
+def upce_expand(ns: int, digits: str) -> str:
+    """UPC-E -> the 11 UPC-A digits, per the specification's expansion rules.
+
+    Written from the rules rather than from our C++ code on purpose: it is the
+    independent half of the UPC-E check, since zxing-cpp reports UPC-E symbols
+    in their expanded form.
+    """
+    x = [int(c) for c in digits]
+    out = [0] * 11
+    out[0] = ns
+    if x[5] <= 2:
+        out[1], out[2], out[3] = x[0], x[1], x[5]
+        out[8], out[9], out[10] = x[2], x[3], x[4]
+    elif x[5] == 3:
+        out[1], out[2], out[3] = x[0], x[1], x[2]
+        out[9], out[10] = x[3], x[4]
+    elif x[5] == 4:
+        out[1], out[2], out[3], out[4] = x[0], x[1], x[2], x[3]
+        out[10] = x[4]
+    else:
+        out[1], out[2], out[3], out[4], out[5] = x[0], x[1], x[2], x[3], x[4]
+        out[10] = x[5]
+    return "".join(str(d) for d in out)
+
+
+def mod10_check(digits: str) -> str:
+    """Mod-10 check digit; the digit next to the check position has weight 3."""
+    total = sum(int(d) * (3 if (len(digits) - 1 - i) % 2 == 0 else 1)
+                for i, d in enumerate(digits))
+    return str((10 - total % 10) % 10)
+
+
+def expected_decode(case: "Case") -> str:
+    """What a decoder should report for this case.
+
+    Not always the same as `text()`: zxing-cpp normalises the UPC formats to
+    their 13-digit EAN-13 form, and reports a UPC-E symbol as the UPC-A it
+    expands to.
+    """
+    if case.fmt == "UPCA":
+        return "0" + case.text
+    if case.fmt == "UPCE":
+        # text() is number system + 6 digits + check digit.
+        body = upce_expand(int(case.text[0]), case.text[1:7])
+        return "0" + body + mod10_check(body)
+    return case.text
+
+
 def decode(img, expect_format: str | None = None):
     """Decode a rendered case with zxing-cpp and return (text, format).
 
     `expect_format` is checked when given: a decoder that reads the right
     payload under the wrong symbology still means we generated the wrong
-    thing (EAN-13 vs UPC-A is the usual trap).
+    thing (EAN-13 vs UPC-A is the usual trap). It also restricts the decoder,
+    because a UPC-A symbol is a valid EAN-13 and would otherwise be reported
+    as one.
     """
     import zxingcpp
 
-    results = zxingcpp.read_barcodes(img)
+    fmt = _zxing_format(expect_format) if expect_format else None
+    results = zxingcpp.read_barcodes(img, formats=fmt) if fmt else zxingcpp.read_barcodes(img)
     if not results:
         raise AssertionError("no barcode found in the rendered image")
     if len(results) > 1:

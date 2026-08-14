@@ -1,0 +1,130 @@
+{
+  "cases": [
+    {
+      "name": "ean13_body",
+      "format": "EAN13",
+      "input": "490123456789",
+      "width": 95,
+      "modules": "10100010110100111001100100100110100001001110101010100111010100001000100100100011101001011100101",
+      "text": "4901234567894",
+      "source": "python-barcode"
+    },
+    {
+      "name": "ean13_zeros",
+      "format": "EAN13",
+      "input": "000000000000",
+      "width": 95,
+      "modules": "10100011010001101000110100011010001101000110101010111001011100101110010111001011100101110010101",
+      "text": "0000000000000",
+      "source": "python-barcode"
+    },
+    {
+      "name": "ean13_nines",
+      "format": "EAN13",
+      "input": "999999999999",
+      "width": 95,
+      "modules": "10100010110010111001011100010110010111000101101010111010011101001110100111010011101001011100101",
+      "text": "9999999999994",
+      "source": "python-barcode"
+    },
+    {
+      "name": "ean13_book",
+      "format": "EAN13",
+      "input": "978030640615",
+      "width": 95,
+      "modules": "10101110110001001010011101111010100111010111101010101110011100101010000110011010011101000100101",
+      "text": "9780306406157",
+      "source": "python-barcode"
+    },
+    {
+      "name": "ean8_body",
+      "format": "EAN8",
+      "input": "1234567",
+      "width": 67,
+      "modules": "1010011001001001101111010100011010101001110101000010001001110010101",
+      "text": "12345670",
+      "source": "python-barcode"
+    },
+    {
+      "name": "ean8_zeros",
+      "format": "EAN8",
+      "input": "0000000",
+      "width": 67,
+      "modules": "1010001101000110100011010001101010101110010111001011100101110010101",
+      "text": "00000000",
+      "source": "python-barcode"
+    },
+    {
+      "name": "upca_body",
+      "format": "UPCA",
+      "input": "03600029145",
+      "width": 95,
+      "modules": "10100011010111101010111100011010001101000110101010110110011101001100110101110010011101101100101",
+      "text": "036000291452",
+      "source": "python-barcode"
+    },
+    {
+      "name": "upca_zeros",
+      "format": "UPCA",
+      "input": "00000000000",
+      "width": 95,
+      "modules": "10100011010001101000110100011010001101000110101010111001011100101110010111001011100101110010101",
+      "text": "000000000000",
+      "source": "python-barcode"
+    },
+    {
+      "name": "upce_tail_0",
+      "format": "UPCE",
+      "input": "123450",
+      "width": 51,
+      "modules": "101011001100100110111101001110101110010001101010101",
+      "text": "01234505",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    },
+    {
+      "name": "upce_tail_1",
+      "format": "UPCE",
+      "input": "425261",
+      "width": 51,
+      "modules": "101001110100100110111001001101101011110011001010101",
+      "text": "04252614",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    },
+    {
+      "name": "upce_tail_2",
+      "format": "UPCE",
+      "input": "123452",
+      "width": 51,
+      "modules": "101011001100110110111101010001101100010011011010101",
+      "text": "01234523",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    },
+    {
+      "name": "upce_tail_3",
+      "format": "UPCE",
+      "input": "123453",
+      "width": 51,
+      "modules": "101011001100110110111101001110101100010111101010101",
+      "text": "01234531",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    },
+    {
+      "name": "upce_tail_4",
+      "format": "UPCE",
+      "input": "123454",
+      "width": 51,
+      "modules": "101011001100110110111101010001101100010011101010101",
+      "text": "01234543",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    },
+    {
+      "name": "upce_tail_9",
+      "format": "UPCE",
+      "input": "123459",
+      "width": 51,
+      "modules": "101011001100100110111101010001101110010010111010101",
+      "text": "01234596",
+      "source": "specification L/G code tables and the UPC-E parity table, written out explicitly (python-barcode has no UPC-E)"
+    }
+  ]
+}

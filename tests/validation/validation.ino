@@ -46,6 +46,16 @@ void setup() {
   // Valid input for contrast: the same checks must not fire.
   code128("valid_control_char", "A\tB", 3);
 
+  // EAN/UPC: only the two accepted lengths, digits only.
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_short", "49012345678", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_long", "49012345678945", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_alpha", "49012345678A", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_space", "4901 3456789", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::EAN8>(Serial, "ean8_short", "123456", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCA>(Serial, "upca_long", "0360002914523", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_len7", "0425261", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::UPCE>(Serial, "upce_ns2", "24252614", buf, sizeof(buf));
+
   bk_report::done(Serial);
 }
 

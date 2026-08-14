@@ -12,6 +12,15 @@ EXPECTED = {
     "forced_a_lowercase": ("InvalidOption", 0),
     "forced_b_control": ("InvalidOption", 1),
     "valid_control_char": ("None", None),
+    # EAN/UPC accept exactly two lengths and digits only.
+    "ean13_short": ("InvalidLength", None),
+    "ean13_long": ("InvalidLength", None),
+    "ean13_alpha": ("InvalidCharacter", 11),
+    "ean13_space": ("InvalidCharacter", 4),
+    "ean8_short": ("InvalidLength", None),
+    "upca_long": ("InvalidLength", None),
+    "upce_len7": ("InvalidLength", None),
+    "upce_ns2": ("InvalidCharacter", 0),
 }
 
 
