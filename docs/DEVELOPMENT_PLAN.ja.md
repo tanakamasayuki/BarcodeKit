@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**11 形式と描画ヘルパーが動いている。残るは examples とドキュメント、実機確認。** 残りの形式はこの繰り返しで足せる状態。
+**11 形式・描画ヘルパー・examples が揃った。残るはドキュメントの仕上げと実機確認。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -19,8 +19,8 @@
 | QR Code | 完了。nayuki 実装を `tools/vendor_qrcodegen.py` で移植し、BarcodeKit の API を被せた |
 | 描画ヘルパー | 完了。汎用コールバック / LovyanGFX・M5GFX / Serial(ASCII) |
 | `tests/` | 8 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `draw_layout` / `draw_render`） |
-| `examples/` | 未着手 |
-| README（日英） | 初版あり。API 確定後に見直す |
+| `examples/` | 完了。M5Unified 5 本 + 描画ライブラリ非依存 2 本（AVR でもビルド可） |
+| README（日英） | 実装に合わせて更新済み。入門ガイドを作るかは検討中 |
 
 検証済みの事実:
 
@@ -33,6 +33,7 @@
 - ESP32 でもビルド可能（Flash 278 KB のスケッチに収まる）
 - **描画ヘルパーを含めても AVR に収まる**（Code 128 + ASCII 出力 + コールバック描画で Flash 3,818 バイト / RAM 315 バイト）
 - **SDL2 上の LovyanGFX へ実際に描いた 14 枚の PNG が zxing-cpp でデコードできる**（全形式 + 色指定 + 座標指定 + 余白なし）
+- examples 7 本が `m5stack_core` でビルドでき、うち 2 本は `avr_uno` でもビルドできる（SerialPrint: Flash 11,790 バイト / RAM 653 バイト）
 - シンボルのオブジェクトは 64 バイト（Codabar のみ 72 バイト。`BARCODEKIT_TEXT_MAX=16` で 32 バイトまで縮む）
 
 ## v0.1.0 のゴール
@@ -57,7 +58,7 @@
 6. ~~**ITF / ITF-14 / Codabar** — 残りの 1次元~~ 完了
 7. ~~**QR Code** — nayuki 実装の移植とメモリ方式の適合~~ 完了
 8. ~~**描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト~~ 完了
-9. **examples** — M5Unified ベース 7 本
+9. ~~**examples** — M5Unified ベース 5 本 + 描画ライブラリ非依存 2 本~~ 完了
 10. **README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる
 11. **手動確認** — 実機で全形式をスキャン確認し、結果を記録
 12. **v0.1.0 リリース**

@@ -4,7 +4,7 @@
 
 組み込み環境向けのバーコード／QRコード**生成**ライブラリ。表示ライブラリに依存しません。
 
-> **開発中です。** 仕様は確定していますが実装はこれからです。現在地は [docs/DEVELOPMENT_PLAN.ja.md](docs/DEVELOPMENT_PLAN.ja.md) を参照してください。
+> **開発中です。** 11 形式と描画ヘルパーは動作し、テストは通っています。残りは実機確認とドキュメントの仕上げです。現在地は [docs/DEVELOPMENT_PLAN.ja.md](docs/DEVELOPMENT_PLAN.ja.md) を参照してください。
 
 ## 特長
 
@@ -98,6 +98,10 @@ BarcodeKit::render(bc, l, opt,
     myDisplay.fillRect(x, y, w, h, black ? BLACK : WHITE);
   });
 ```
+
+## サンプル
+
+[examples/](examples/) に 7 本あります。まずは [HelloBarcode](examples/HelloBarcode/)（最小例）、画面がないなら [SerialPrint](examples/SerialPrint/)（AVR でも動く）から。一覧は [examples/README.ja.md](examples/README.ja.md)。
 
 ## 対応形式
 

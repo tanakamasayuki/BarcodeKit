@@ -48,3 +48,9 @@ The first run downloads the core and libraries into the arduino-cli environment,
 - `common_libs/bk_report/` — sketch-side helper that prints the report. **Test-only**, never shipped in a release: the library itself must not grow a test-only API
 
 The report protocol is specified in `docs/TEST_PLAN.ja.md` §2.
+
+## Writing a test sketch
+
+- **No template functions in a `.ino`.** The Arduino preprocessor inserts generated prototypes above the first function, which lands between `template <class T>` and its function. Put templates in `common_libs/bk_report` instead (`bk_report::run<T>()`, `sameSymbol<T>()`, `layout<T>()`).
+- **No global variable called `index`** — it collides with `index()` from `<string.h>`.
+- **Never add a test-only API to the library.** The report is built from the public API only.

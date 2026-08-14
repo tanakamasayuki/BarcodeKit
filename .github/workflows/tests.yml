@@ -72,12 +72,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Every example has an m5stack_core profile; only the two that need
+          # no graphics library have an avr_uno one, and the loop below skips
+          # the rest automatically.
           - name: esp32-m5stack-core
             profile: m5stack_core
-            examples: all
           - name: avr-uno
             profile: avr_uno
-            examples: onedim
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

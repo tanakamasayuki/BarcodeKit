@@ -48,3 +48,9 @@ uv run pytest vectors -v
 - `common_libs/bk_report/` — スケッチ側でレポートを出力するヘルパー。**テスト専用**で、リリースには含まれない（ライブラリ本体にテスト用 API を足さないため）
 
 レポートプロトコルの仕様は [../docs/TEST_PLAN.ja.md](../docs/TEST_PLAN.ja.md) §2 にある。
+
+## スケッチを書くときの注意
+
+- **`.ino` にテンプレート関数を書かない。** Arduino のプリプロセッサが生成するプロトタイプが `template <class T>` と関数の間に挿入され、コンパイルが通らなくなる。テンプレートは `common_libs/bk_report` に置く（`bk_report::run<T>()` / `sameSymbol<T>()` / `layout<T>()`）。
+- **`index` という名前のグローバル変数を作らない。** `<string.h>` の `index()` と衝突する。
+- **テスト専用の API をライブラリ本体に足さない。** レポートは公開 API だけで組み立てる。

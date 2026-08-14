@@ -4,7 +4,7 @@
 
 Barcode and QR code **generator** for embedded systems, independent of any display library.
 
-> **Under development.** The design is settled; the implementation is not written yet. See `docs/DEVELOPMENT_PLAN.ja.md` for the current state.
+> **Under development.** All eleven formats and the drawing helpers work and the test suite passes; what remains is hardware verification and finishing the documentation. See `docs/DEVELOPMENT_PLAN.ja.md` for the current state.
 
 ## Features
 
@@ -98,6 +98,10 @@ BarcodeKit::render(bc, l, opt,
     myDisplay.fillRect(x, y, w, h, black ? BLACK : WHITE);
   });
 ```
+
+## Examples
+
+Seven sketches live in [examples/](examples/). Start with [HelloBarcode](examples/HelloBarcode/), or [SerialPrint](examples/SerialPrint/) if you have no display (it builds for AVR too). The list is in [examples/README.md](examples/README.md).
 
 ## Supported formats
 

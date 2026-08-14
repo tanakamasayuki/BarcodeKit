@@ -45,6 +45,7 @@ text	KEYWORD2
 isEncoded	KEYWORD2
 format	KEYWORD2
 message	KEYWORD2
+formatName	KEYWORD2
 setCheckDigit	KEYWORD2
 setVerifyCheckDigit	KEYWORD2
 setUppercase	KEYWORD2
