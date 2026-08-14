@@ -65,6 +65,11 @@ void setup() {
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_digits", "1234567890", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_symbols", "A-B.C $/+%", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_single", "A", buf, sizeof(buf));
+  // Inputs whose C/K check characters land on the shift characters (values
+  // 43-46). Code93.h used to have only 44 table entries and read past the end.
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_c_43", "9999", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_k_45", "ZZ", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_k_43", "+/", buf, sizeof(buf));
 
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_body", "490123456789", buf, sizeof(buf));
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_zeros", "000000000000", buf, sizeof(buf));

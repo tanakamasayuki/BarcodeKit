@@ -13,17 +13,27 @@
 namespace BarcodeKit {
 namespace detail {
 
-// 9 modules per character, most significant bit first, 1 = bar. Same value
-// order as kCode39Chars; entry 43 is the '*' start/stop character.
-static const uint16_t kCode93Patterns[44] BARCODEKIT_TABLE = {
+// 9 modules per character, most significant bit first, 1 = bar.
+//
+// Entries 0..42 are the data characters, in the same value order as
+// kCode39Chars. Entries 43..46 are the four shift characters. They are never
+// emitted as data here (full ASCII mode is not supported), but the C and K
+// check characters are taken mod 47 and so can land on any of them - which is
+// why the table has to cover the whole range. Entry 47 is the '*' start/stop.
+static const uint16_t kCode93Patterns[48] BARCODEKIT_TABLE = {
     0x114, 0x148, 0x144, 0x142, 0x128, 0x124, 0x122, 0x150, 0x112, 0x10A,
     0x1A8, 0x1A4, 0x1A2, 0x194, 0x192, 0x18A, 0x168, 0x164, 0x162, 0x134,
     0x11A, 0x158, 0x14C, 0x146, 0x12C, 0x116, 0x1B4, 0x1B2, 0x1AC, 0x1A6,
     0x196, 0x19A, 0x16C, 0x166, 0x136, 0x13A, 0x12E, 0x1D4, 0x1D2, 0x1CA,
-    0x16E, 0x176, 0x1AE, 0x15E,
+    0x16E, 0x176, 0x1AE,
+    0x126,  // 43 ($)
+    0x1DA,  // 44 (%)
+    0x1D6,  // 45 (/)
+    0x132,  // 46 (+)
+    0x15E,  // 47 start/stop '*'
 };
 
-static const uint8_t kCode93StartStop = 43;
+static const uint8_t kCode93StartStop = 47;
 static const uint8_t kCode93Modulus = 47;
 
 }  // namespace detail

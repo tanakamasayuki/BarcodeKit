@@ -89,6 +89,33 @@
       "modules": "1010111101101010001101010001100101101010111101",
       "text": "A",
       "source": "specification module table and the published mod-47 C/K rules"
+    },
+    {
+      "name": "c93_check_c_43",
+      "format": "Code93",
+      "input": "9999",
+      "width": 73,
+      "modules": "1010111101000010101000010101000010101000010101001001101101011001010111101",
+      "text": "9999",
+      "source": "specification module table including the shift characters (C=43, K=28; values 43-46 are the shift characters, which the check characters can land on)"
+    },
+    {
+      "name": "c93_check_k_45",
+      "format": "Code93",
+      "input": "ZZ",
+      "width": 55,
+      "modules": "1010111101001110101001110101101001001110101101010111101",
+      "text": "ZZ",
+      "source": "specification module table including the shift characters (C=11, K=45; values 43-46 are the shift characters, which the check characters can land on)"
+    },
+    {
+      "name": "c93_check_k_43",
+      "format": "Code93",
+      "input": "+/",
+      "width": 55,
+      "modules": "1010111101011101101011011101101011001001001101010111101",
+      "text": "+/",
+      "source": "specification module table including the shift characters (C=28, K=43; values 43-46 are the shift characters, which the check characters can land on)"
     }
   ]
 }

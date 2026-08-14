@@ -186,6 +186,62 @@ void layout(Print& out, const char* name, const Symbol& sym, uint16_t areaW, uin
   out.println();
 }
 
+// Compares every module of two encoded symbols.
+template <class A, class B>
+bool sameModules(const A& x, const B& y) {
+  if (x.width() != y.width() || x.height() != y.height()) return false;
+  for (uint16_t row = 0; row < x.height(); row++) {
+    for (uint16_t col = 0; col < x.width(); col++) {
+      if (x.module(col, row) != y.module(col, row)) return false;
+    }
+  }
+  return true;
+}
+
+// Encodes the same input into two objects and two different buffers. The
+// different addresses matter: a symbol that somehow depended on where its
+// buffer sits would still look stable in a single-buffer test.
+template <class Symbol>
+void deterministic(Print& out, const char* name, const char* data, uint8_t* bufA, size_t sizeA,
+                   uint8_t* bufB, size_t sizeB) {
+  Symbol s1, s2;
+  BarcodeKit::Result r1 = s1.encode(data, bufA, sizeA);
+  BarcodeKit::Result r2 = s2.encode(data, bufB, sizeB);
+  check(out, name, (bool)r1 && (bool)r2 && sameModules(s1, s2),
+        "two objects, two buffers, same input");
+}
+
+// Encodes the same input `times` times and compares each result to the first.
+template <class Symbol>
+void stableAcrossCalls(Print& out, const char* name, const char* data, uint8_t* bufA, size_t sizeA,
+                       uint8_t* bufB, size_t sizeB, uint8_t times = 10) {
+  Symbol first;
+  if (!first.encode(data, bufA, sizeA)) {
+    check(out, name, false, "first encode failed");
+    return;
+  }
+  bool ok = true;
+  for (uint8_t i = 0; i < times && ok; i++) {
+    Symbol again;
+    ok = (bool)again.encode(data, bufB, sizeB) && sameModules(first, again);
+  }
+  check(out, name, ok, "repeated encodes of the same input");
+}
+
+// Encodes `first` and then `second` into one object, and compares the result
+// against a fresh object given only `second`: nothing of the first may remain.
+template <class Symbol>
+void noCarryOver(Print& out, const char* name, const char* first, const char* second,
+                 uint8_t* bufA, size_t sizeA, uint8_t* bufB, size_t sizeB) {
+  Symbol fresh, reused;
+  const bool a = (bool)fresh.encode(second, bufA, sizeA);
+  const bool b1 = (bool)reused.encode(first, bufB, sizeB);
+  const bool b2 = (bool)reused.encode(second, bufB, sizeB);
+  bool ok = a && b1 && b2 && sameModules(fresh, reused);
+  ok = ok && fresh.text() && reused.text() && strcmp(fresh.text(), reused.text()) == 0;
+  check(out, name, ok, "reused object matches a fresh one");
+}
+
 // Marks the end of a sketch's output so the test can tell "no more cases"
 // from "the sketch died halfway".
 inline void done(Print& out) { out.println(F("#DONE")); }

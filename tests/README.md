@@ -33,9 +33,9 @@ The first run downloads the core and libraries into the arduino-cli environment,
 - `checkdigit/` — computing, verifying and rejecting check digits
 - `buffer/` — `bufferSize()` correctness, `BufferTooSmall` one byte short, and no writes past the buffer
 - `qr/` — ECC level, version range, mask, boost ECC, capacity boundaries
-- `determinism/` — same input, same output; reusing an object leaves no stale state
-- `fuzz/` — random input with ASan / UBSan enabled
-- `noalloc/` — `malloc` is never called during `encode()`
+- `determinism/` — the same input through two objects and two buffers agrees, ten repeats agree, and a reused object keeps nothing from the previous input
+- `noalloc/` — `malloc` and `new` are replaced with counting versions and must not be called during `encode()` or while reading the result. **It checks its own hook first**
+- `fuzz/` — random input with ASan / UBSan enabled. **The one test that skips the Arduino toolchain** and builds with g++ directly, because a sketch profile has nowhere to put sanitizer flags
 
 **Tier 2 — drawing helpers (LovyanGFX + SDL2)**
 

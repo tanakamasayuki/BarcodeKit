@@ -4,7 +4,7 @@
 
 ## 現在地
 
-**11 形式・描画ヘルパー・examples・ドキュメントが揃った。残るは未実装の 3 テストと実機確認。** 残りの形式はこの繰り返しで足せる状態。
+**11 形式・描画ヘルパー・examples・ドキュメント・テストが揃った。残るは実機確認だけ。** 残りの形式はこの繰り返しで足せる状態。
 
 | 領域 | 状況 |
 | --- | --- |
@@ -18,7 +18,7 @@
 | ITF / ITF-14 / Codabar | 完了。ITF の偶数桁規則、ITF-14 のチェックディジット、Codabar の start/stop |
 | QR Code | 完了。nayuki 実装を `tools/vendor_qrcodegen.py` で移植し、BarcodeKit の API を被せた |
 | 描画ヘルパー | 完了。汎用コールバック / LovyanGFX・M5GFX / Serial(ASCII) |
-| `tests/` | 8 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `draw_layout` / `draw_render`）。`determinism` / `fuzz` / `noalloc` は**未実装** |
+| `tests/` | 11 ディレクトリすべて緑（`vectors` / `roundtrip` / `validation` / `buffer` / `checkdigit` / `qr` / `determinism` / `noalloc` / `fuzz` / `draw_layout` / `draw_render`） |
 | `examples/` | 完了。M5Unified 5 本 + 描画ライブラリ非依存 2 本（AVR でもビルド可） |
 | ドキュメント（日英） | 完了。README / GUIDE / FORMATS / API を実装に合わせて整備 |
 
@@ -35,6 +35,9 @@
 - **SDL2 上の LovyanGFX へ実際に描いた 14 枚の PNG が zxing-cpp でデコードできる**（全形式 + 色指定 + 座標指定 + 余白なし）
 - examples 7 本が `m5stack_core` でビルドでき、うち 2 本は `avr_uno` でもビルドできる（SerialPrint: Flash 11,790 バイト / RAM 653 バイト）
 - **ドキュメントのコード例が実際にコンパイル・実行できる**（README / GUIDE / API の M5 非依存スニペットを 1 つのプログラムにまとめて確認）
+- 11 形式で動的確保が 1 回も起きない（`malloc` / `new` を計数版に差し替えて測定）
+- 同じ入力から常に同じシンボルが出る（2 オブジェクト × 2 バッファ、10 回反復、オブジェクト再利用、QR の自動マスク選択を含む）
+- ASan / UBSan 下でのファジング 2 シード × 20,000 回で異常なし（**Code 93 のバグを 1 件検出し修正した**）
 - シンボルのオブジェクトは 64 バイト（Codabar のみ 72 バイト。`BARCODEKIT_TEXT_MAX=16` で 32 バイトまで縮む）
 
 ## v0.1.0 のゴール
@@ -61,7 +64,7 @@
 8. ~~**描画ヘルパー** — `Callback.h` → `Serial.h` → `LovyanGFX.h`、`draw_layout` / `draw_render` テスト~~ 完了
 9. ~~**examples** — M5Unified ベース 5 本 + 描画ライブラリ非依存 2 本~~ 完了
 10. ~~**README（日英）と入門ガイド** — 実装が固まってから書く。API が動いてから書かないと嘘が混じる~~ 完了（[GUIDE](GUIDE.ja.md) / [API](API.ja.md) を追加。コード例は実際にコンパイル・実行して検証した）
-11. **未実装テストの追加** — `determinism` / `fuzz` / `noalloc`。[REQUIREMENTS.ja.md](REQUIREMENTS.ja.md) §8 の 3 項目を「設計で担保」から「テストで確認済み」に変えるため
+11. ~~**未実装テストの追加** — `determinism` / `fuzz` / `noalloc`~~ 完了
 12. **手動確認** — 実機で全形式をスキャン確認し、結果を [MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) §5 に記録。**特に Codabar のチェックディジット**
 13. **v0.1.0 リリース**
 
@@ -69,7 +72,7 @@
 
 | # | 項目 | 状況 |
 | --- | --- | --- |
-| A | `determinism` / `fuzz` / `noalloc` テスト | 未着手。ドキュメントでは「未実装」と明示済み |
+| A | ~~`determinism` / `fuzz` / `noalloc` テスト~~ | **完了。** ファジングが Code 93 の表外読み出しを検出し、修正した |
 | B | 実機でのスキャン確認 | 未実施（実機待ち）。手順は [MANUAL_TEST.ja.md](MANUAL_TEST.ja.md) |
 | C | RP2040 / SAMD のビルド検査 | CI にジョブはあるが、example にプロファイルが無く実質何もしていない。対応を主張するなら追加が必要 |
 

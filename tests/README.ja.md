@@ -33,9 +33,9 @@ uv run pytest vectors -v
 - `checkdigit/` — チェックディジットの自動計算・検証・不一致検出
 - `buffer/` — `bufferSize()` の正しさ、1バイト不足で `BufferTooSmall`、はみ出し書き込みが無いこと
 - `qr/` — ECC レベル・バージョン・マスク・boost ECC・容量境界
-- `determinism/` — 同じ入力から同じ結果。オブジェクト再利用で前回の状態が残らないこと
-- `fuzz/` — ランダム入力（ASan / UBSan 有効）
-- `noalloc/` — `encode()` 中に `malloc` が呼ばれないこと
+- `determinism/` — 同じ入力を 2 オブジェクト・2 バッファで符号化して一致すること、10 回反復しても変わらないこと、オブジェクト再利用で前回の入力が残らないこと
+- `noalloc/` — `malloc` / `new` を計数版に差し替え、`encode()` 中と結果の読み出し中に 1 回も呼ばれないこと。**フック自体が効いているかを最初に確認する**
+- `fuzz/` — ランダム入力（ASan / UBSan 有効）。**このテストだけ Arduino ツールチェーンを通さず g++ で直接ビルドする**（プロファイルにサニタイザのフラグを渡す場所が無いため）
 
 **Tier 2 — 描画ヘルパー（LovyanGFX + SDL2）**
 

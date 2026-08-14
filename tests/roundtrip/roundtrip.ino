@@ -71,6 +71,11 @@ void setup() {
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_single", "A", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_long", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", buf, sizeof(buf));
   bk_report::run<BarcodeKit::Code93>(Serial, "c93_upper", "abc123", buf, sizeof(buf), code93Upper);
+  // The check characters of these land on the Code 93 shift characters.
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_c_43", "9999", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_k_45", "ZZ", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_check_k_43", "+/", buf, sizeof(buf));
+  bk_report::run<BarcodeKit::Code93>(Serial, "c93_digits_long", "999999999", buf, sizeof(buf));
 
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_body", "490123456789", buf, sizeof(buf));
   bk_report::run<BarcodeKit::EAN13>(Serial, "ean13_full", "4901234567894", buf, sizeof(buf));
