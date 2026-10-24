@@ -6,6 +6,8 @@
 
 > **開発中です。** 11 形式と描画ヘルパーは動作し、テストは通っています。残りは実機確認とドキュメントの仕上げです。現在地は [docs/DEVELOPMENT_PLAN.ja.md](docs/DEVELOPMENT_PLAN.ja.md) を参照してください。
 
+初めて使う場合は[サンプル入門ガイド](docs/GUIDE_EXAMPLES.ja.md)と[各例の日英README](examples/README.ja.md)を参照してください。準備、APIの流れ、確認方法、組み込み時の注意を説明しています。
+
 ## 特長
 
 - **11 形式に対応** — Code 39 / Code 93 / Code 128 / EAN-8 / EAN-13 / UPC-A / UPC-E / ITF / ITF-14 / Codabar / QR Code

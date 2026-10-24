@@ -43,3 +43,19 @@ Add a profile to `sketch.yaml` for other boards. The library itself depends on n
 - **No global variable called `index`.** It collides with `index()` from `<string.h>`.
 
 The manual hardware check procedure is in `../docs/MANUAL_TEST.ja.md` (Japanese).
+
+## Workflow and individual READMEs
+
+Start with the [example workflow](../docs/GUIDE_EXAMPLES.md), then choose the relevant sketch.
+
+A useful starting point is [SerialPrint](SerialPrint/README.md). Check its required hardware and choose another entry below if it does not match your setup.
+
+| Example | Learn |
+|---|---|
+| [AllFormats](AllFormats/README.md) | Cycle through supported barcode demonstrations |
+| [EAN13Display](EAN13Display/README.md) | Display an EAN-13 code and its readable digits |
+| [FitToScreen](FitToScreen/README.md) | Choose an integer module scale for a display region |
+| [HelloBarcode](HelloBarcode/README.md) | Encode and display a first one-dimensional barcode |
+| [MemoryUsage](MemoryUsage/README.md) | Inspect object and encoding memory usage |
+| [QRCodeDisplay](QRCodeDisplay/README.md) | Encode a QR code and inspect version and size |
+| [SerialPrint](SerialPrint/README.md) | Inspect encoded modules through Serial |

@@ -1,14 +1,5 @@
-// FitToScreen - how big can this symbol be drawn here?
-//
-// layout() answers that: it picks the largest whole-number scale that fits the
-// area you give it, and reports whether it fitted at all. Press button A to
-// cycle through progressively smaller areas and watch the scale drop - and
-// then watch the helper refuse to draw once even one pixel per module no
-// longer fits.
-//
-// Refusing is deliberate: a symbol squeezed below one pixel per module cannot
-// be scanned, and drawing it anyway would hide the problem.
-
+// en: Choose an integer module scale for a display region
+// ja: 表示領域に合わせて整数のモジュール倍率を選ぶ
 #include <M5Unified.h>
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
@@ -50,6 +41,8 @@ void setup() {
   auto cfg = M5.config();
   M5.begin(cfg);
 
+  // en: Encode into sufficiently large storage and validate the returned result before consuming output.
+  // ja: 十分な領域へ符号化し、結果を確認してから出力を使います。
   BarcodeKit::Result r = barcode.encode("ABC-12345", buf, sizeof(buf));
   if (!r) {
     M5.Display.drawString(r.message(), 10, 10);

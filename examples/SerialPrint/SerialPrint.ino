@@ -1,14 +1,5 @@
-// SerialPrint - barcodes without any display at all.
-//
-// BarcodeKit produces the black/white module pattern; what you do with it is
-// up to you. This sketch prints it to the serial monitor as text, which is the
-// quickest way to see whether your data encodes the way you expected. Open the
-// serial monitor at 115200 baud with a fixed-width font.
-//
-// No graphics library is involved, so this sketch also builds for AVR:
-//
-//   arduino-cli compile --profile avr_uno .
-
+// en: Inspect encoded modules through Serial
+// ja: 符号化したモジュールをシリアルで確認する
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
 
@@ -19,6 +10,8 @@ static uint8_t qrBuf[BarcodeKit::QRCode::bufferSize(2)];
 
 static void printCode128() {
   BarcodeKit::Code128 code;
+  // en: Encode into sufficiently large storage and validate the returned result before consuming output.
+  // ja: 十分な領域へ符号化し、結果を確認してから出力を使います。
   BarcodeKit::Result r = code.encode("ABC-12345", buf, sizeof(buf));
   if (!r) {
     Serial.println(r.message());

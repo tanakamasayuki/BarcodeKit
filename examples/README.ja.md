@@ -43,3 +43,19 @@ arduino-cli compile --profile avr_uno --upload -p /dev/ttyACM0 .
 - **`index` という名前のグローバル変数を作らない。** `<string.h>` の `index()` と衝突します。
 
 実機での確認手順は [../docs/MANUAL_TEST.ja.md](../docs/MANUAL_TEST.ja.md) にあります。
+
+## 実行ガイドと個別README
+
+最初に[サンプル入門ガイド](../docs/GUIDE_EXAMPLES.ja.md)を読み、目的に合う例へ進んでください。
+
+最初の候補は[SerialPrint](SerialPrint/README.ja.md)です。必要な機器を確認し、対象が異なる場合は下の一覧から選び直してください。
+
+| 例 | 学ぶこと |
+|---|---|
+| [AllFormats](AllFormats/README.ja.md) | 複数形式のバーコード例を切り替える |
+| [EAN13Display](EAN13Display/README.ja.md) | EAN-13と読み取り用の数字を表示する |
+| [FitToScreen](FitToScreen/README.ja.md) | 表示領域に合わせて整数のモジュール倍率を選ぶ |
+| [HelloBarcode](HelloBarcode/README.ja.md) | 最初の一次元バーコードを符号化して表示する |
+| [MemoryUsage](MemoryUsage/README.ja.md) | オブジェクトと符号化のメモリ量を調べる |
+| [QRCodeDisplay](QRCodeDisplay/README.ja.md) | QRを符号化してVersionと寸法を確認する |
+| [SerialPrint](SerialPrint/README.ja.md) | 符号化したモジュールをSerialで確認する |

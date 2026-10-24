@@ -6,6 +6,8 @@ Barcode and QR code **generator** for embedded systems, independent of any displ
 
 > **Under development.** All eleven formats and the drawing helpers work and the test suite passes; what remains is hardware verification and finishing the documentation. See `docs/DEVELOPMENT_PLAN.ja.md` for the current state.
 
+Start with the [example workflow](docs/GUIDE_EXAMPLES.md) and [individual example READMEs](examples/README.md) for setup, API sequence, verification and adaptation notes.
+
 ## Features
 
 - **11 formats** — Code 39, Code 93, Code 128, EAN-8, EAN-13, UPC-A, UPC-E, ITF, ITF-14, Codabar, QR Code

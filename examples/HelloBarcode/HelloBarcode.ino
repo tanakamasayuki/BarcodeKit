@@ -1,11 +1,5 @@
-// HelloBarcode - the smallest complete BarcodeKit sketch.
-//
-// Encodes one Code 128 symbol and draws it centred on the display.
-//
-// The buffer is yours: BarcodeKit never allocates. bufferSize() tells you how
-// big it has to be, at compile time, so the array below is exactly right for
-// up to 16 input characters.
-
+// en: Encode and display a first one-dimensional barcode
+// ja: 最初の一次元バーコードを符号化して表示する
 #include <M5Unified.h>
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
@@ -18,6 +12,8 @@ void setup() {
   M5.begin(cfg);
   M5.Display.fillScreen(TFT_WHITE);
 
+  // en: Encode into sufficiently large storage and validate the returned result before consuming output.
+  // ja: 十分な領域へ符号化し、結果を確認してから出力を使います。
   BarcodeKit::Result r = barcode.encode("ABC-12345", buf, sizeof(buf));
   if (!r) {
     M5.Display.setTextColor(TFT_RED, TFT_WHITE);

@@ -1,10 +1,5 @@
-// QRCodeDisplay - a QR code on the display, with the error correction level
-// switchable so you can see what it costs.
-//
-// Press button A to step through L, M, Q and H. Higher levels survive more
-// damage but hold less data, so the same text needs a bigger symbol - watch
-// the version and the module size change.
-
+// en: Encode a QR code and inspect version and size
+// ja: QRを符号化してVersionと寸法を確認する
 #include <M5Unified.h>
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
@@ -24,6 +19,8 @@ static void showQr() {
   M5.Display.fillScreen(TFT_WHITE);
   qr.setEcc(kLevels[level]);
 
+  // en: Encode into sufficiently large storage and validate the returned result before consuming output.
+  // ja: 十分な領域へ符号化し、結果を確認してから出力を使います。
   BarcodeKit::Result r = qr.encode(kText, buf, sizeof(buf));
   if (!r) {
     M5.Display.setTextColor(TFT_RED, TFT_WHITE);

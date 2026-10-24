@@ -1,14 +1,5 @@
-// MemoryUsage - how much memory each format needs, printed at runtime.
-//
-// BarcodeKit never allocates: you pass a buffer and bufferSize() tells you how
-// big it must be. Because it is constexpr, the array can be sized at compile
-// time and the number is known before the sketch even runs:
-//
-//   uint8_t buf[BarcodeKit::EAN13::bufferSize()];
-//
-// This sketch prints those numbers for every format, plus the size of the
-// symbol objects themselves. No graphics library, so it builds for AVR too.
-
+// en: Inspect object and encoding memory usage
+// ja: オブジェクトと符号化のメモリ量を調べる
 #include <BarcodeKit.h>
 
 static void row(const char *name, size_t buffer, size_t object) {

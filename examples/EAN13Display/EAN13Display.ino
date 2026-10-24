@@ -1,17 +1,5 @@
-// EAN13Display - a JAN/EAN-13 symbol with the digits printed underneath.
-//
-// Two things worth noticing:
-//
-// * You pass 12 digits and BarcodeKit computes the 13th (the check digit).
-//   text() gives you the full 13, which is what a scanner will read back.
-// * The guard bars at the left, centre and right reach below the data bars.
-//   The drawing helper does that for you; barExtends(x) is how it knows which
-//   columns they are, and this sketch uses the same information to place the
-//   digits in the gaps.
-//
-// The human readable digits are not drawn by the library: fonts and placement
-// are too application-specific. This is what doing it yourself looks like.
-
+// en: Display an EAN-13 code and its readable digits
+// ja: EAN-13と読み取り用の数字を表示する
 #include <M5Unified.h>
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
@@ -26,6 +14,8 @@ void setup() {
   M5.begin(cfg);
   M5.Display.fillScreen(TFT_WHITE);
 
+  // en: Encode into sufficiently large storage and validate the returned result before consuming output.
+  // ja: 十分な領域へ符号化し、結果を確認してから出力を使います。
   BarcodeKit::Result r = ean.encode(kBody, buf, sizeof(buf));
   if (!r) {
     M5.Display.setTextColor(TFT_RED, TFT_WHITE);

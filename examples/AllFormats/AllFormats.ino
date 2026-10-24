@@ -1,10 +1,5 @@
-// AllFormats - every format BarcodeKit supports, one per screen.
-//
-// Press button A for the next format, button C for the previous one. This is
-// the sketch used for the manual scanner check (docs/MANUAL_TEST.ja.md): each
-// screen shows the format, the data as encoded, and the scale it was drawn
-// at, so a failed scan can be reported precisely.
-
+// en: Cycle through supported barcode demonstrations
+// ja: 複数形式のバーコード例を切り替える
 #include <M5Unified.h>
 #include <BarcodeKit.h>
 #include <BarcodeKitDraw.h>
